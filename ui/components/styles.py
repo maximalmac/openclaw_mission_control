@@ -123,15 +123,21 @@ STYLES = r"""<style>
 
           .sidebar-backdrop { display:none; }
 
-          @media (max-width: 900px) {
+          @media (max-width: 1100px), (hover: none) and (pointer: coarse) {
+            body { font-size: 18px; }
             .mobile-menu-btn { display:inline-flex; }
             .subtle, .theme-toggle, .status-pill { display:none; }
-            .sidebar { transform: translateX(-100%); transition: transform .2s ease; width: 78vw; max-width: 320px; }
+            .sidebar { transform: translateX(-100%); transition: transform .2s ease; width: 82vw; max-width: 340px; }
             .sidebar.mobile-open { transform: translateX(0); }
             .sidebar-backdrop { display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 55; }
             .sidebar-backdrop.visible { display:block; }
             .main-wrapper { margin-left: 0; width: 100%; }
+            .page-title { font-size: 1.6rem; }
+            .nav-item { font-size: 1.05rem; padding: 12px 12px; }
+            .nav-section-title { font-size: 0.78rem; }
             main { padding: 14px; }
+            .section-title { font-size: 1.5rem; }
+            .bot-col { font-size: 0.98rem; }
             .section-header { gap:10px; flex-wrap: wrap; }
             .bot-list-wrap { width: 100%; flex: 1 1 auto; min-width: 0; }
             .inline-config.visible { display:block; width: 100%; }
@@ -139,7 +145,8 @@ STYLES = r"""<style>
             .bot-row { grid-template-columns: 1fr 0.8fr; grid-auto-rows: auto; }
             .bot-row .bot-col:nth-child(3) { text-align: right; }
             .bot-row .actions { justify-content: flex-end; }
-            .actions button { width: 80px; min-width: 80px; }
+            .actions button { width: 92px; min-width: 92px; font-size: 0.95rem; }
+            input, select, textarea, button { font-size: 1rem; }
           }
 
           /* Hard sync top divider alignment across all pages */
