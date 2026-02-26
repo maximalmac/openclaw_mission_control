@@ -17,9 +17,11 @@ DASHBOARD_HTML = (
     """
     + SIDEBAR
     + r"""
+        <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeMobileSidebar()"></div>
         <div class="main-wrapper">
           <header>
-            <div class="header-left">
+            <div class="header-left" style="display:flex; align-items:center; gap:10px;">
+              <button class="mobile-menu-btn" onclick="toggleMobileSidebar()">☰</button>
               <div class="page-title">Mission Control</div>
             </div>
             <div class="header-right">

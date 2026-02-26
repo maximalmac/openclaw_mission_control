@@ -1,6 +1,17 @@
 SCRIPTS = r"""<script>
           const saved = localStorage.getItem('mc-theme') || 'dark';
           document.documentElement.dataset.theme = saved === 'light' ? 'light' : 'dark';
+
+          function toggleMobileSidebar() {
+            document.querySelector('.sidebar')?.classList.toggle('mobile-open');
+            document.getElementById('sidebarBackdrop')?.classList.toggle('visible');
+          }
+
+          function closeMobileSidebar() {
+            document.querySelector('.sidebar')?.classList.remove('mobile-open');
+            document.getElementById('sidebarBackdrop')?.classList.remove('visible');
+          }
+
           function toggleTheme() {
             const current = document.documentElement.dataset.theme;
             const next = current === 'light' ? 'dark' : 'light';
@@ -584,6 +595,8 @@ SCRIPTS = r"""<script>
           document.getElementById('createBotName')?.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') confirmCreateBot();
           });
+
+          document.querySelectorAll('.nav-item').forEach(el => el.addEventListener('click', () => closeMobileSidebar()));
 
           document.getElementById('createStrategyName')?.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') confirmCreateStrategy();

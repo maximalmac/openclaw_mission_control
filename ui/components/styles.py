@@ -88,6 +88,7 @@ STYLES = r"""<style>
           .actions { display: flex; gap: 8px; }
 
           .theme-toggle { background: var(--card-bg); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 999px; cursor: pointer; font-size: 12px; }
+          .mobile-menu-btn { display:none; background: var(--card-bg); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 8px; cursor: pointer; font-size: 14px; }
           .header-right { display: flex; align-items: center; gap: 12px; }
           .subtle { color: var(--text-muted); font-size: 12px; }
 
@@ -119,6 +120,27 @@ STYLES = r"""<style>
           .modal-title { font-weight: 600; margin-bottom: 8px; }
           .modal-text { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 14px; }
           .modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
+
+          .sidebar-backdrop { display:none; }
+
+          @media (max-width: 900px) {
+            .mobile-menu-btn { display:inline-flex; }
+            .subtle, .theme-toggle, .status-pill { display:none; }
+            .sidebar { transform: translateX(-100%); transition: transform .2s ease; width: 78vw; max-width: 320px; }
+            .sidebar.mobile-open { transform: translateX(0); }
+            .sidebar-backdrop { display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 55; }
+            .sidebar-backdrop.visible { display:block; }
+            .main-wrapper { margin-left: 0; width: 100%; }
+            main { padding: 14px; }
+            .section-header { gap:10px; flex-wrap: wrap; }
+            .bot-list-wrap { width: 100%; flex: 1 1 auto; min-width: 0; }
+            .inline-config.visible { display:block; width: 100%; }
+            .bots-layout { flex-direction: column; }
+            .bot-row { grid-template-columns: 1fr 0.8fr; grid-auto-rows: auto; }
+            .bot-row .bot-col:nth-child(3) { text-align: right; }
+            .bot-row .actions { justify-content: flex-end; }
+            .actions button { width: 80px; min-width: 80px; }
+          }
 
           /* Hard sync top divider alignment across all pages */
           .sidebar-header,
