@@ -192,6 +192,11 @@ def render_dashboard(active_page="trading-bots"):
 
 @app.get("/", response_class=HTMLResponse)
 def home():
+    return render_dashboard("home")
+
+
+@app.get("/trading-bots", response_class=HTMLResponse)
+def trading_bots_page():
     return render_dashboard("trading-bots")
 
 

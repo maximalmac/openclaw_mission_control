@@ -122,8 +122,10 @@ DASHBOARD_HTML = r"""
             <button class="sidebar-toggle" onclick="toggleTheme()">🌗</button>
           </div>
           <div class="sidebar-nav">
+            <div class="nav-section-title">Home</div>
+            <a id="nav-home" class="nav-item" href="/"><span class="nav-icon">🏠</span><span>Dashboard</span></a>
             <div class="nav-section-title">Bots</div>
-            <a id="nav-trading-bots" class="nav-item" href="/"><span class="nav-icon">📈</span><span>Trading Bots</span></a>
+            <a id="nav-trading-bots" class="nav-item" href="/trading-bots"><span class="nav-icon">📈</span><span>Trading Bots</span></a>
             <a id="nav-utility-bots" class="nav-item" href="/utility-bots"><span class="nav-icon">🛠️</span><span>Utility Bots</span></a>
             <div class="nav-section-title">Configuration</div>
             <a id="nav-usage" class="nav-item" href="/usage"><span class="nav-icon">📊</span><span>Usage</span></a>
@@ -144,6 +146,22 @@ DASHBOARD_HTML = r"""
           </header>
 
           <main>
+            <section id="home" class="section">
+              <div class="section-header" style="margin-bottom:16px;">
+                <div class="section-title">Dashboard</div>
+              </div>
+              <div class="bot-list" style="gap:16px;">
+                <div class="config-panel">
+                  <div class="section-title" style="margin-bottom:8px;">Trading Stats</div>
+                  <div class="bot-col">Coming next: equity, open positions, daily/weekly P&L, win rate, drawdown.</div>
+                </div>
+                <div class="config-panel">
+                  <div class="section-title" style="margin-bottom:8px;">System Overview</div>
+                  <div class="bot-col">Bots online/offline, exchange connectivity, and risk summary will appear here.</div>
+                </div>
+              </div>
+            </section>
+
             <section id="trading-bots" class="section">
               <div class="section-header" style="margin-bottom:16px; display:flex; justify-content:space-between; align-items:center;">
                 <div class="section-title">Trading Bots</div>
@@ -510,6 +528,7 @@ DASHBOARD_HTML = r"""
 
           const activePage = '{{ACTIVE_PAGE}}';
           document.getElementById('nav-' + activePage)?.classList.add('active');
+          document.getElementById('home').style.display = activePage === 'home' ? 'block' : 'none';
           document.getElementById('trading-bots').style.display = activePage === 'trading-bots' ? 'block' : 'none';
           document.getElementById('utility-bots').style.display = activePage === 'utility-bots' ? 'block' : 'none';
           document.getElementById('usage').style.display = activePage === 'usage' ? 'block' : 'none';
