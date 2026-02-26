@@ -218,7 +218,7 @@ MAIN_CONTENT = r"""<main>
               </div>
             </section>
 
-            <section id="changelog" class="section" style="margin-top:24px;">
+            <section id="changelog" class="section">
               <div id="changelogRender" class="config-panel" style="line-height:1.6;"></div>
             </section>
 
