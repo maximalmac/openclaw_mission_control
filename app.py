@@ -47,22 +47,52 @@ def save_usage(data):
     USAGE_FILE.write_text(json.dumps(data, indent=2))
 
 
+def strategy_slug(name: str) -> str:
+    s = ''.join(ch.lower() if ch.isalnum() else '_' for ch in str(name).strip())
+    while '__' in s:
+        s = s.replace('__', '_')
+    return s.strip('_')
+
+
+def normalize_strategies(data: dict) -> dict:
+    lst = data.get("list", []) if isinstance(data, dict) else []
+    out = []
+    for item in lst:
+        if isinstance(item, dict):
+            name = str(item.get("name", "")).strip()
+            sid = str(item.get("id", "")).strip() or strategy_slug(name)
+        else:
+            name = str(item).strip()
+            sid = strategy_slug(name)
+        if not name or not sid:
+            continue
+        out.append({"id": sid, "name": name})
+    # dedupe by id preserving order
+    seen = set(); dedup=[]
+    for x in out:
+        if x['id'] in seen: continue
+        seen.add(x['id']); dedup.append(x)
+    return {"list": dedup}
+
+
 def load_strategies():
     if STRATEGIES_FILE.exists():
-        return json.loads(STRATEGIES_FILE.read_text())
+        try:
+            return normalize_strategies(json.loads(STRATEGIES_FILE.read_text()))
+        except Exception:
+            pass
     return {"list": []}
 
 
 def save_strategies(data):
-    STRATEGIES_FILE.write_text(json.dumps(data, indent=2))
-    names = data.get("list", []) if isinstance(data, dict) else []
-    for n in names:
-        safe = str(n).strip().replace("/", "-")
-        if not safe:
-            continue
-        p = STRATEGY_MD_DIR / f"{safe}.md"
+    norm = normalize_strategies(data if isinstance(data, dict) else {})
+    STRATEGIES_FILE.write_text(json.dumps(norm, indent=2))
+    for item in norm.get("list", []):
+        sid = item["id"]
+        title = item["name"]
+        p = STRATEGY_MD_DIR / f"{sid}.md"
         if not p.exists():
-            p.write_text(f"# {safe}\n\nDescribe this strategy here.\n")
+            p.write_text(f"# {title}\n\nDescribe this strategy here.\n")
 
 
 def bot_dir(name: str):
@@ -360,27 +390,29 @@ def api_strategy_create(payload: dict):
     name = str(payload.get("name", "")).strip()
     if not name:
         raise HTTPException(400, "Name required")
+    sid = strategy_slug(name)
     data = load_strategies()
-    lst = data.get("list", []) if isinstance(data, dict) else []
-    if name not in lst:
-        lst.append(name)
-    data = {"list": lst}
-    save_strategies(data)
-    return {"ok": True, "name": name}
+    lst = data.get("list", [])
+    if not any(x.get("id") == sid for x in lst):
+        lst.append({"id": sid, "name": name})
+    save_strategies({"list": lst})
+    return {"ok": True, "name": name, "id": sid}
 
 
-@app.get("/api/strategy/{name}/md")
-def api_strategy_md(name: str):
-    safe = str(name).strip().replace("/", "-")
+@app.get("/api/strategy/{sid}/md")
+def api_strategy_md(sid: str):
+    safe = strategy_slug(sid)
+    data = load_strategies()
+    display = next((x.get("name") for x in data.get("list", []) if x.get("id") == safe), safe)
     p = STRATEGY_MD_DIR / f"{safe}.md"
     if not p.exists():
-        p.write_text(f"# {safe}\n\nDescribe this strategy here.\n")
-    return {"name": safe, "markdown": p.read_text()}
+        p.write_text(f"# {display}\n\nDescribe this strategy here.\n")
+    return {"id": safe, "name": display, "markdown": p.read_text()}
 
 
-@app.post("/api/strategy/{name}/md")
-def api_strategy_md_save(name: str, payload: dict):
-    safe = str(name).strip().replace("/", "-")
+@app.post("/api/strategy/{sid}/md")
+def api_strategy_md_save(sid: str, payload: dict):
+    safe = strategy_slug(sid)
     p = STRATEGY_MD_DIR / f"{safe}.md"
     p.write_text(str(payload.get("markdown", "")))
     return {"ok": True}

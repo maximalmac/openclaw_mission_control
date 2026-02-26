@@ -497,29 +497,30 @@ DASHBOARD_HTML = r"""
           async function loadStrategies() {
             const res = await fetch('/api/strategies');
             const data = await res.json();
-            const list = data.list || [];
+            const list = data.list || []; // [{id,name}]
 
             const sel = document.getElementById('strategySelect');
-            if (sel) sel.innerHTML = list.map(s => '<option value="' + s + '">' + s + '</option>').join('');
+            if (sel) sel.innerHTML = list.map(s => '<option value="' + s.id + '">' + s.name + '</option>').join('');
 
             const container = document.getElementById('strategiesList');
             if (container) {
-              container.innerHTML = list.map(s => '<div class="bot-row" onclick="openStrategy(\'' + s.replace(/'/g, "\\'") + '\')"><div class="bot-col bot-name">🧠 ' + s + '</div></div>').join('');
+              container.innerHTML = list.map(s => '<div class="bot-row" onclick="openStrategy(\'' + s.id.replace(/'/g, "\\'") + '\')"><div class="bot-col bot-name">🧠 ' + s.name + '</div></div>').join('');
             }
 
             if (list.length) {
               const remembered = localStorage.getItem('mc-selected-strategy');
-              const pick = (remembered && list.includes(remembered)) ? remembered : list[0];
+              const ids = list.map(x => x.id);
+              const pick = (remembered && ids.includes(remembered)) ? remembered : list[0].id;
               openStrategy(pick);
             }
           }
 
-          async function openStrategy(name) {
-            currentStrategy = name;
-            localStorage.setItem('mc-selected-strategy', name);
-            document.getElementById('strategyPanelTitle').innerText = 'Strategy: ' + name;
-            const res = await fetch('/api/strategy/' + encodeURIComponent(name) + '/md');
+          async function openStrategy(id) {
+            currentStrategy = id;
+            localStorage.setItem('mc-selected-strategy', id);
+            const res = await fetch('/api/strategy/' + encodeURIComponent(id) + '/md');
             const data = await res.json();
+            document.getElementById('strategyPanelTitle').innerText = 'Strategy: ' + (data.name || id);
             document.getElementById('strategyMarkdown').value = data.markdown || '';
           }
 
