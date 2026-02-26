@@ -10,12 +10,18 @@ import shutil
 
 BASE = Path(os.getenv("OPENCLAW_WORKSPACE", "/Users/markfiebiger/.openclaw/workspace")).resolve()
 MC_DIR = Path(__file__).resolve().parent
-AGENTS_DIR = BASE / "agents"
+AGENTS_ROOT = BASE / "agents"
+TRADING_BOTS_DIR = AGENTS_ROOT / "trading"
+UTILITY_BOTS_DIR = AGENTS_ROOT / "utility"
+STRATEGY_MD_DIR = BASE / "strategies"
 STATE_FILE = MC_DIR / "state.json"
 USAGE_FILE = MC_DIR / "usage.json"
 STRATEGIES_FILE = MC_DIR / "strategies.json"
 BOT_ORDER_FILE = MC_DIR / "bot_order.json"
-TEMPLATE_DIR = AGENTS_DIR / "bot-template"
+TEMPLATE_DIR = AGENTS_ROOT / "bot-template"
+
+for d in [AGENTS_ROOT, TRADING_BOTS_DIR, UTILITY_BOTS_DIR, STRATEGY_MD_DIR]:
+    d.mkdir(parents=True, exist_ok=True)
 
 app = FastAPI()
 
@@ -48,23 +54,43 @@ def load_strategies():
 
 def save_strategies(data):
     STRATEGIES_FILE.write_text(json.dumps(data, indent=2))
+    names = data.get("list", []) if isinstance(data, dict) else []
+    for n in names:
+        safe = str(n).strip().replace("/", "-")
+        if not safe:
+            continue
+        p = STRATEGY_MD_DIR / f"{safe}.md"
+        if not p.exists():
+            p.write_text(f"# {safe}\n\nDescribe this strategy here.\n")
+
+
+def bot_dir(name: str):
+    for base in [TRADING_BOTS_DIR, UTILITY_BOTS_DIR, AGENTS_ROOT]:
+        d = base / name
+        if d.exists() and d.is_dir():
+            return d
+    return None
 
 
 def list_bots():
     bots = []
-    if not AGENTS_DIR.exists():
-        return bots
-    for d in AGENTS_DIR.iterdir():
-        if d.is_dir() and d.name != "bot-template":
-            bot_py = d / "bot.py"
-            if bot_py.exists():
-                bots.append(d.name)
-    return bots
+    for base in [TRADING_BOTS_DIR, UTILITY_BOTS_DIR]:
+        if not base.exists():
+            continue
+        for d in base.iterdir():
+            if d.is_dir():
+                bot_py = d / "bot.py"
+                if bot_py.exists():
+                    bots.append(d.name)
+    return sorted(set(bots))
 
 
 def bot_kind(name: str) -> str:
-    cfg = AGENTS_DIR / name / "config.json"
-    if cfg.exists():
+    d = bot_dir(name)
+    if d and d.parent == UTILITY_BOTS_DIR:
+        return "utility"
+    cfg = (d / "config.json") if d else None
+    if cfg and cfg.exists():
         try:
             data = json.loads(cfg.read_text())
             kind = str(data.get("bot_kind") or data.get("type") or data.get("category") or "").lower()
@@ -76,8 +102,9 @@ def bot_kind(name: str) -> str:
 
 
 def bot_profile(name: str) -> dict:
-    cfg = AGENTS_DIR / name / "config.json"
-    if cfg.exists():
+    d = bot_dir(name)
+    cfg = (d / "config.json") if d else None
+    if cfg and cfg.exists():
         try:
             data = json.loads(cfg.read_text())
             return {
@@ -549,7 +576,10 @@ def render_dashboard(active_page="trading-bots"):
             hideSaveModal();
           }
 
+          let pendingCreateKind = 'trading';
+
           function createBot() {
+            pendingCreateKind = (activePage === 'utility-bots') ? 'utility' : 'trading';
             document.getElementById('createBotName').value = '';
             document.getElementById('createModal').classList.add('visible');
             setTimeout(() => document.getElementById('createBotName').focus(), 50);
@@ -562,7 +592,7 @@ def render_dashboard(active_page="trading-bots"):
           async function confirmCreateBot() {
             const name = document.getElementById('createBotName').value.trim();
             if (!name) return;
-            await fetch('/api/bot/create', { method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name}) });
+            await fetch('/api/bot/create', { method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name, bot_kind: pendingCreateKind}) });
             hideCreateModal();
             location.reload();
           }
@@ -762,12 +792,14 @@ def api_bot_start(name: str):
     if status["status"] == "running":
         return {"ok": True, "message": "Already running"}
 
-    bot_dir = AGENTS_DIR / name
-    bot_py = bot_dir / "bot.py"
+    d = bot_dir(name)
+    if not d:
+        raise HTTPException(404, "Bot folder not found")
+    bot_py = d / "bot.py"
     if not bot_py.exists():
         raise HTTPException(404, "bot.py not found")
 
-    proc = subprocess.Popen(["python3", str(bot_py)], cwd=str(bot_dir))
+    proc = subprocess.Popen(["python3", str(bot_py)], cwd=str(d))
 
     state = load_state()
     state.setdefault("bots", {})[name] = {"pid": proc.pid, "started_at": int(time.time())}
@@ -800,7 +832,10 @@ def api_bot_stop(name: str):
 def api_bot_config(name: str):
     if name not in list_bots():
         raise HTTPException(404, "Bot not found")
-    cfg = AGENTS_DIR / name / "config.json"
+    d = bot_dir(name)
+    if not d:
+        raise HTTPException(404, "Bot not found")
+    cfg = d / "config.json"
     if not cfg.exists():
         return {}
     return JSONResponse(json.loads(cfg.read_text()))
@@ -810,7 +845,10 @@ def api_bot_config(name: str):
 def api_bot_config_save(name: str, payload: dict):
     if name not in list_bots():
         raise HTTPException(404, "Bot not found")
-    cfg = AGENTS_DIR / name / "config.json"
+    d = bot_dir(name)
+    if not d:
+        raise HTTPException(404, "Bot not found")
+    cfg = d / "config.json"
     cfg.write_text(json.dumps(payload, indent=2))
     return {"ok": True}
 
@@ -819,7 +857,10 @@ def api_bot_config_save(name: str, payload: dict):
 def api_bot_files(name: str):
     if name not in list_bots():
         raise HTTPException(404, "Bot not found")
-    base = AGENTS_DIR / name
+    d = bot_dir(name)
+    if not d:
+        raise HTTPException(404, "Bot not found")
+    base = d
     files = {
         "SOUL": (base / "SOUL.md").read_text() if (base / "SOUL.md").exists() else "",
         "STRATEGY": (base / "STRATEGY.md").read_text() if (base / "STRATEGY.md").exists() else "",
@@ -833,7 +874,10 @@ def api_bot_files(name: str):
 def api_bot_files_save(name: str, payload: dict):
     if name not in list_bots():
         raise HTTPException(404, "Bot not found")
-    base = AGENTS_DIR / name
+    d = bot_dir(name)
+    if not d:
+        raise HTTPException(404, "Bot not found")
+    base = d
     if "SOUL" in payload:
         (base / "SOUL.md").write_text(payload.get("SOUL", ""))
     if "STRATEGY" in payload:
@@ -861,18 +905,23 @@ def api_bot_create(payload: dict):
     name = payload.get("name", "").strip()
     if not name:
         raise HTTPException(400, "Name required")
-    target = AGENTS_DIR / name
-    if target.exists():
+    kind = str(payload.get("bot_kind", "trading")).lower()
+    parent = UTILITY_BOTS_DIR if kind == "utility" else TRADING_BOTS_DIR
+    target = parent / name
+    if target.exists() or bot_dir(name):
         raise HTTPException(400, "Bot already exists")
     if TEMPLATE_DIR.exists():
         shutil.copytree(TEMPLATE_DIR, target)
-        # ensure a bot.py exists for runnable bots
         if not (target / "bot.py").exists():
             (target / "bot.py").write_text("#!/usr/bin/env python3\nprint('Bot runner not implemented yet')\n")
     else:
         target.mkdir(parents=True)
         (target / "bot.py").write_text("#!/usr/bin/env python3\nprint('Bot runner not implemented yet')\n")
         (target / "config.json").write_text(json.dumps({}, indent=2))
+    cfg_path = target / "config.json"
+    cfg = json.loads(cfg_path.read_text()) if cfg_path.exists() else {}
+    cfg["bot_kind"] = "utility" if kind == "utility" else "trading"
+    cfg_path.write_text(json.dumps(cfg, indent=2))
     return {"ok": True, "name": name}
 
 
@@ -880,8 +929,8 @@ def api_bot_create(payload: dict):
 def api_bot_delete(name: str):
     if name == "bot-template":
         raise HTTPException(400, "Cannot delete template")
-    target = AGENTS_DIR / name
-    if not target.exists() or not target.is_dir():
+    target = bot_dir(name)
+    if not target or not target.exists() or not target.is_dir():
         raise HTTPException(404, "Bot not found")
     shutil.rmtree(target)
     # cleanup runtime state if present
