@@ -303,7 +303,7 @@ DASHBOARD_HTML = r"""
                     <div class="config-row" style="flex:0;">
                       <div style="flex:1;">
                         <label>Emoji</label>
-                        <input id="strategyEmoji" placeholder="🧠" style="max-width:120px;" />
+                        <input id="strategyEmoji" list="strategyEmojiList" placeholder="🧠" style="max-width:120px;" />
                       </div>
                     </div>
                     <div class="config-row">
@@ -364,6 +364,11 @@ DASHBOARD_HTML = r"""
                 <input id="createStrategyName" placeholder="e.g. mean-reversion" />
               </div>
             </div>
+            <div class="config-row" style="margin-bottom: 8px;">
+              <div style="flex:1; max-width:140px;">
+                <input id="createStrategyEmoji" list="strategyEmojiList" placeholder="🧠" />
+              </div>
+            </div>
             <div class="modal-actions">
               <button class="btn-secondary" onclick="hideCreateStrategyModal()">Cancel</button>
               <button class="btn-primary" onclick="confirmCreateStrategy()">Create</button>
@@ -392,6 +397,19 @@ DASHBOARD_HTML = r"""
             </div>
           </div>
         </div>
+
+        <datalist id="strategyEmojiList">
+          <option value="🧠"></option>
+          <option value="📈"></option>
+          <option value="📉"></option>
+          <option value="⚡"></option>
+          <option value="🎯"></option>
+          <option value="🛡️"></option>
+          <option value="🔁"></option>
+          <option value="🌊"></option>
+          <option value="🔥"></option>
+          <option value="🤖"></option>
+        </datalist>
 
         <script>
           const saved = localStorage.getItem('mc-theme') || 'dark';
@@ -641,6 +659,7 @@ DASHBOARD_HTML = r"""
 
           function showCreateStrategyModal() {
             document.getElementById('createStrategyName').value = '';
+            document.getElementById('createStrategyEmoji').value = '🧠';
             document.getElementById('createStrategyModal').classList.add('visible');
             setTimeout(() => document.getElementById('createStrategyName').focus(), 50);
           }
@@ -652,7 +671,7 @@ DASHBOARD_HTML = r"""
           async function confirmCreateStrategy() {
             const name = document.getElementById('createStrategyName').value.trim();
             if (!name) return;
-            const emoji = '🧠';
+            const emoji = (document.getElementById('createStrategyEmoji').value || '🧠').trim();
             const res = await fetch('/api/strategy/create', {
               method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ name, emoji })
             });
