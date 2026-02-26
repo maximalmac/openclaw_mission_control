@@ -19,3 +19,7 @@
 - Bot list columns adjusted for more even spacing; status/mode/pid/action are aligned and action button size is consistent.
 - Bot config field order updated: Name, Emoji/Avatar, Trading Mode, Strategy, then Config.
 - Switching between bots now warns if there are unsaved changes.
+- Bot config panel now uses remaining width while bot list remains fixed at 25%.
+- Bot config JSON textbox moved below SOUL and set to read-only.
+- Trading mode toggle now refreshes bot list/status view and reloads bot config after change.
+- Bot row spacing and action column sizing tuned for more consistent button visibility.

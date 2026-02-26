@@ -102,9 +102,9 @@ DASHBOARD_HTML = r"""
           .config-actions { display: flex; gap: 8px; margin-top: 12px; }
 
           /* Inline config panel */
-          .bots-layout { display: flex; gap: 16px; align-items: flex-start; }
-          .bot-list-wrap { width: 25%; min-width: 280px; }
-          .inline-config { width: 75%; display: none; }
+          .bots-layout { display: flex; gap: 16px; align-items: stretch; }
+          .bot-list-wrap { width: 25%; min-width: 280px; flex: 0 0 25%; }
+          .inline-config { flex: 1; width: auto; display: none; }
           .inline-config.visible { display: block; }
           .full-height-card .config-panel { height: 100%; display: flex; flex-direction: column; }
           .full-height-card .config-row { flex: 1; display: flex; }
@@ -219,14 +219,14 @@ DASHBOARD_HTML = r"""
                     </div>
                     <div class="config-row">
                       <div style="flex:1;">
-                        <label>Config (config.json)</label>
-                        <textarea id="configText"></textarea>
+                        <label>SOUL.md</label>
+                        <textarea id="soulText"></textarea>
                       </div>
                     </div>
                     <div class="config-row">
                       <div style="flex:1;">
-                        <label>SOUL.md</label>
-                        <textarea id="soulText"></textarea>
+                        <label>Config (config.json)</label>
+                        <textarea id="configText" readonly></textarea>
                       </div>
                     </div>
                     <div class="config-actions" style="justify-content: space-between; align-items: center;">
@@ -456,6 +456,8 @@ DASHBOARD_HTML = r"""
               await fetch('/api/bot/' + currentConfigBot + '/config', {
                 method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(cfg)
               });
+              await loadConfig(currentConfigBot);
+              location.reload();
             }
           }
 
@@ -478,7 +480,8 @@ DASHBOARD_HTML = r"""
           async function saveConfigData() {
             const bot = currentConfigBot;
             if (!bot) return false;
-            const text = document.getElementById('configText').value;
+            const res = await fetch('/api/bot/' + bot + '/config');
+            const text = await res.text();
             let payload;
             try { payload = JSON.parse(text); } catch (e) { alert('Invalid JSON'); return false; }
             const strat = document.getElementById('strategySelect').value;
