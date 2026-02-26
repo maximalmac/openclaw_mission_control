@@ -18,5 +18,6 @@ SIDEBAR = r"""<aside class="sidebar">
             <div class="nav-section-title">Configuration</div>
             <a id="nav-usage" class="nav-item" href="/usage"><span class="nav-icon">📊</span><span>Usage</span></a>
             <a id="nav-strategies" class="nav-item" href="/strategies"><span class="nav-icon">🧠</span><span>Strategies</span></a>
+            <a id="nav-changelog" class="nav-item" href="/changelog"><span class="nav-icon">🗒️</span><span>Changelog</span></a>
           </div>
         </aside>"""

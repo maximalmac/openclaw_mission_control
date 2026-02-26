@@ -415,6 +415,7 @@ SCRIPTS = r"""<script>
           document.getElementById('back-testing').style.display = (activePage === 'back-testing' || activePage === 'back-testing-reports') ? 'block' : 'none';
           document.getElementById('readiness').style.display = activePage === 'readiness' ? 'block' : 'none';
           document.getElementById('usage').style.display = activePage === 'usage' ? 'block' : 'none';
+          document.getElementById('changelog').style.display = activePage === 'changelog' ? 'block' : 'none';
           document.getElementById('strategies').style.display = activePage === 'strategies' ? 'block' : 'none';
 
           if (activePage === 'trading-bots' || activePage === 'utility-bots') {
@@ -424,6 +425,12 @@ SCRIPTS = r"""<script>
           }
           if (activePage === 'usage') {
             loadUsage();
+          }
+          if (activePage === 'changelog') {
+            fetch('/api/changelog').then(r => r.text()).then(t => {
+              const el = document.getElementById('changelogText');
+              if (el) el.value = t;
+            });
           }
           if (activePage === 'strategies') {
             loadStrategies();

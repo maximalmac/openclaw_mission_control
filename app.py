@@ -259,6 +259,11 @@ def readiness_page():
     return render_dashboard("readiness")
 
 
+@app.get("/changelog", response_class=HTMLResponse)
+def changelog_page():
+    return render_dashboard("changelog")
+
+
 @app.get("/usage", response_class=HTMLResponse)
 def usage_page():
     return render_dashboard("usage")
@@ -267,6 +272,12 @@ def usage_page():
 @app.get("/strategies", response_class=HTMLResponse)
 def strategies_page():
     return render_dashboard("strategies")
+
+
+@app.get("/api/changelog")
+def api_changelog():
+    p = MC_DIR / "CHANGELOG.md"
+    return p.read_text() if p.exists() else "# Changelog\n\nNo changelog yet."
 
 
 @app.get("/api/bots")

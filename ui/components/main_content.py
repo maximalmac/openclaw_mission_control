@@ -151,6 +151,20 @@ MAIN_CONTENT = r"""<main>
               </div>
             </section>
 
+            <section id="changelog" class="section" style="margin-top:24px;">
+              <div class="section-header" style="margin-bottom:16px;">
+                <div class="section-title">Changelog</div>
+              </div>
+              <div class="config-panel">
+                <div class="config-row" style="margin-bottom:0;">
+                  <div style="flex:1; min-height:0; display:flex; flex-direction:column;">
+                    <label>CHANGELOG.md</label>
+                    <textarea id="changelogText" readonly style="min-height:60vh;"></textarea>
+                  </div>
+                </div>
+              </div>
+            </section>
+
             <section id="strategies" class="section" style="margin-top:24px;">
               <div class="section-header" style="margin-bottom:16px; display:flex; justify-content:space-between; align-items:center;">
                 <div class="section-title">Strategies</div>
