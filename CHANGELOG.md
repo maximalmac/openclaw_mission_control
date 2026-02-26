@@ -28,3 +28,6 @@
 - Trading Bots config panel now stretches vertically to fill remaining page height.
 - PID handling now preserves and displays last known PID after start/stop transitions.
 - Mode/PID display split onto two lines for clearer readability.
+- Removed PID from bot list row display to keep the list cleaner.
+- SOUL editor now expands to fill available vertical space in bot config panel.
+- Trading mode changes now require modal confirmation before applying.

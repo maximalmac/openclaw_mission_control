@@ -219,10 +219,10 @@ DASHBOARD_HTML = r"""
                         <select id="strategySelect"></select>
                       </div>
                     </div>
-                    <div class="config-row">
-                      <div style="flex:1;">
+                    <div class="config-row" style="flex:1; min-height:0;">
+                      <div style="flex:1; min-height:0; display:flex; flex-direction:column;">
                         <label>SOUL.md</label>
-                        <textarea id="soulText"></textarea>
+                        <textarea id="soulText" style="flex:1; min-height:220px;"></textarea>
                       </div>
                     </div>
                     <div class="config-row">
@@ -343,6 +343,17 @@ DASHBOARD_HTML = r"""
           </div>
         </div>
 
+        <div class="modal-overlay" id="modeConfirmModal">
+          <div class="modal">
+            <div class="modal-title">Confirm Trading Mode Change</div>
+            <div class="modal-text" id="modeConfirmText">Switch trading mode?</div>
+            <div class="modal-actions">
+              <button class="btn-secondary" onclick="hideModeConfirmModal()">Cancel</button>
+              <button class="btn-primary" onclick="confirmTradingModeChange()">Confirm</button>
+            </div>
+          </div>
+        </div>
+
         <div class="modal-overlay" id="saveModal">
           <div class="modal">
             <div class="modal-title">Save Changes</div>
@@ -442,25 +453,48 @@ DASHBOARD_HTML = r"""
           }
 
           let currentTradingMode = 'paper';
+          let pendingTradingMode = null;
 
-          async function setTradingMode(mode, persist=true) {
-            currentTradingMode = mode === 'live' ? 'live' : 'paper';
+          function renderTradingModeButtons() {
             const paperBtn = document.getElementById('modePaperBtn');
             const liveBtn = document.getElementById('modeLiveBtn');
             if (paperBtn && liveBtn) {
               paperBtn.className = currentTradingMode === 'paper' ? 'btn-primary' : 'btn-secondary';
               liveBtn.className = currentTradingMode === 'live' ? 'btn-primary' : 'btn-secondary';
             }
-            if (persist && currentConfigBot) {
-              const res = await fetch('/api/bot/' + currentConfigBot + '/config');
-              const cfg = await res.json();
-              cfg.trading_mode = currentTradingMode;
-              await fetch('/api/bot/' + currentConfigBot + '/config', {
-                method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(cfg)
-              });
-              await loadConfig(currentConfigBot);
-              location.reload();
+          }
+
+          async function setTradingMode(mode, persist=true) {
+            const nextMode = mode === 'live' ? 'live' : 'paper';
+            if (persist) {
+              if (nextMode === currentTradingMode) return;
+              pendingTradingMode = nextMode;
+              document.getElementById('modeConfirmText').innerText = 'Switch to ' + (nextMode === 'live' ? 'Live Trading' : 'Paper Trading') + '?';
+              document.getElementById('modeConfirmModal').classList.add('visible');
+              return;
             }
+            currentTradingMode = nextMode;
+            renderTradingModeButtons();
+          }
+
+          function hideModeConfirmModal() {
+            pendingTradingMode = null;
+            document.getElementById('modeConfirmModal').classList.remove('visible');
+          }
+
+          async function confirmTradingModeChange() {
+            if (!pendingTradingMode || !currentConfigBot) return;
+            currentTradingMode = pendingTradingMode;
+            renderTradingModeButtons();
+            const res = await fetch('/api/bot/' + currentConfigBot + '/config');
+            const cfg = await res.json();
+            cfg.trading_mode = currentTradingMode;
+            await fetch('/api/bot/' + currentConfigBot + '/config', {
+              method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(cfg)
+            });
+            hideModeConfirmModal();
+            await loadConfig(currentConfigBot);
+            location.reload();
           }
 
           async function loadConfig(bot) {

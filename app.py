@@ -209,7 +209,7 @@ def render_dashboard(active_page="trading-bots"):
         <div class="bot-row" draggable="true" data-bot="{b}" onclick="openConfig('{b}')">
           <div class="bot-col bot-name">{avatar_html} {profile.get('display_name', b)}</div>
           <div class="bot-col"><span class="card-badge {badge_class}">{status['status']}</span></div>
-          <div class="bot-col"><div>{mode_badge}</div><div>PID: {status['pid'] or '-'}</div></div>
+          <div class="bot-col">{mode_badge}</div>
           <div class="bot-col actions" onclick="event.stopPropagation()">
             <button class="{toggle_class}" onclick="toggleBot('{b}','{status['status']}')">{toggle_label}</button>
           </div>
