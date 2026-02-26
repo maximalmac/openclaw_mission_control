@@ -1,8 +1,8 @@
 {
   "bots": {
     "cally": {
-      "pid": null,
-      "started_at": 1772079583
+      "pid": 30181,
+      "started_at": 1772084880
     },
     "test": {
       "pid": null,

@@ -23,3 +23,5 @@
 - Bot config JSON textbox moved below SOUL and set to read-only.
 - Trading mode toggle now refreshes bot list/status view and reloads bot config after change.
 - Bot row spacing and action column sizing tuned for more consistent button visibility.
+- Fixed bot row grid sizing in narrow left panel so Start/Stop toggle is always visible.
+- Bot config panel now explicitly flexes to fill remaining horizontal space.

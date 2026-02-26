@@ -66,14 +66,14 @@ DASHBOARD_HTML = r"""
 
           main { padding: 24px; flex: 1; }
           .bot-list { display: flex; flex-direction: column; gap: 10px; }
-          .bot-row { display: grid; grid-template-columns: minmax(220px,1.6fr) minmax(140px,1fr) minmax(160px,1fr) minmax(140px,1fr); gap: 12px; align-items: center; background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
+          .bot-row { display: grid; grid-template-columns: 1.4fr 0.9fr 1.1fr 0.9fr; gap: 10px; align-items: center; background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px; min-width: 0; }
           .bot-row:hover { background: var(--card-hover); border-color: var(--accent); }
           .bot-row.dragging { opacity: 0.5; }
           .bot-row.drop-target { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
-          .bot-col { font-size: 0.85rem; color: var(--text-muted); text-align: center; }
-          .bot-name { color: var(--text); font-weight: 600; display:flex; align-items:center; gap:8px; text-align:left; }
-          .actions { justify-content: center; }
-          .actions button { min-width: 90px; }
+          .bot-col { font-size: 0.82rem; color: var(--text-muted); text-align: center; min-width: 0; }
+          .bot-name { color: var(--text); font-weight: 600; display:flex; align-items:center; gap:8px; text-align:left; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+          .actions { justify-content: center; display:flex; }
+          .actions button { min-width: 84px; width: 84px; }
           .bot-avatar { width:20px; height:20px; border-radius:50%; object-fit:cover; }
           .bot-emoji { font-size: 1rem; line-height: 1; }
           .card-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
@@ -104,7 +104,7 @@ DASHBOARD_HTML = r"""
           /* Inline config panel */
           .bots-layout { display: flex; gap: 16px; align-items: stretch; }
           .bot-list-wrap { width: 25%; min-width: 280px; flex: 0 0 25%; }
-          .inline-config { flex: 1; width: auto; display: none; }
+          .inline-config { flex: 1 1 0; width: auto; min-width: 0; display: none; }
           .inline-config.visible { display: block; }
           .full-height-card .config-panel { height: 100%; display: flex; flex-direction: column; }
           .full-height-card .config-row { flex: 1; display: flex; }
