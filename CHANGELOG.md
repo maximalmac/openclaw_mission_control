@@ -45,5 +45,6 @@
 - Added **Changelog** page in the Mission Control UI (Configuration section), backed by `CHANGELOG.md`.
 - Added a richer **Mission Control Overview** block on the Home dashboard summarizing current capabilities and key missing pieces for full automation.
 - Added utility bot **Bashir** (`agents/utility/bashir`) and wired Investigate action to trigger deep research runs.
+- Sidebar updated with a dedicated **Strategy Research** category and Research Feed item.
 - Investigate now produces synthesized strategy output and writes both strategy markdown and research report artifacts.
 - Updated **Dax** strategy scan behavior to return up to 5 ideas per run and avoid repeating previously returned strategy titles.

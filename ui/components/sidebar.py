@@ -12,7 +12,8 @@ SIDEBAR = r"""<aside class="sidebar">
             <a id="nav-utility-bots" class="nav-item" href="/utility-bots"><span class="nav-icon">🛠️</span><span>Utility Bots</span></a>
             <div class="nav-section-title">Tools</div>
             <a id="nav-back-testing" class="nav-item" href="/back-testing"><span class="nav-icon">🧪</span><span>Back-Testing</span></a>
-            <a id="nav-strategy-research" class="nav-item" href="/strategy-research"><span class="nav-icon">🔎</span><span>Strategy Research</span></a>
+            <div class="nav-section-title">Strategy Research</div>
+            <a id="nav-strategy-research" class="nav-item" href="/strategy-research"><span class="nav-icon">🔎</span><span>Research Feed</span></a>
             <div class="nav-section-title">Report</div>
             <a id="nav-back-testing-reports" class="nav-item" href="/back-testing-reports"><span class="nav-icon">📄</span><span>Back-Testing Reports</span></a>
             <a id="nav-readiness" class="nav-item" href="/readiness"><span class="nav-icon">✅</span><span>Readiness Checklist</span></a>

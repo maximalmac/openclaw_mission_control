@@ -1,6 +1,56 @@
 {
   "items": [
     {
+      "title": "Basis Divergence Convergence",
+      "source": "SSRN",
+      "url": "https://example.com/strategy/basis-divergence",
+      "confidence": 0.6,
+      "synopsis": "Exploit short-term basis dislocations between perp and index with strict time-stop.",
+      "status": "new",
+      "created_at": "2026-02-26 19:09:12",
+      "notes": "Added by Dax strategy scan"
+    },
+    {
+      "title": "Liquidation Sweep Reversal",
+      "source": "X/Community",
+      "url": "https://example.com/strategy/liquidation-sweep",
+      "confidence": 0.52,
+      "synopsis": "Look for liquidation wicks followed by reclaim and momentum reversal confirmation.",
+      "status": "new",
+      "created_at": "2026-02-26 19:09:12",
+      "notes": "Added by Dax strategy scan"
+    },
+    {
+      "title": "Regime-Switch EMA Pullback",
+      "source": "YouTube",
+      "url": "https://example.com/strategy/regime-ema-pullback",
+      "confidence": 0.57,
+      "synopsis": "Use trend regime classification then execute pullback entries aligned with higher timeframe direction.",
+      "status": "new",
+      "created_at": "2026-02-26 19:09:12",
+      "notes": "Added by Dax strategy scan"
+    },
+    {
+      "title": "Volatility Compression Expansion",
+      "source": "TradingView",
+      "url": "https://example.com/strategy/vol-compression",
+      "confidence": 0.55,
+      "synopsis": "Detect low-volatility squeeze and enter on expansion with ATR-based exits.",
+      "status": "new",
+      "created_at": "2026-02-26 19:09:12",
+      "notes": "Added by Dax strategy scan"
+    },
+    {
+      "title": "Breakout Retest Momentum",
+      "source": "GitHub",
+      "url": "https://example.com/strategy/breakout-retest",
+      "confidence": 0.58,
+      "synopsis": "Trade confirmed structure breaks after controlled retest with volume confirmation.",
+      "status": "new",
+      "created_at": "2026-02-26 19:09:12",
+      "notes": "Added by Dax strategy scan"
+    },
+    {
       "title": "Funding Rate Mean Reversion (Perps)",
       "source": "DAX test run",
       "url": "https://example.com/strategy/funding-mean-reversion",
