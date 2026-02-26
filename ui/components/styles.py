@@ -123,7 +123,7 @@ STYLES = r"""<style>
 
           .sidebar-backdrop { display:none; }
 
-          body.mobile-layout { font-size: 18px; }
+          body.mobile-layout { font-size: 20px; }
           body.mobile-layout .mobile-menu-btn { display:inline-flex; }
           body.mobile-layout .subtle,
           body.mobile-layout .theme-toggle,
@@ -133,12 +133,12 @@ STYLES = r"""<style>
           body.mobile-layout .sidebar-backdrop { display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 55; }
           body.mobile-layout .sidebar-backdrop.visible { display:block; }
           body.mobile-layout .main-wrapper { margin-left: 0; width: 100%; }
-          body.mobile-layout .page-title { font-size: 1.6rem; }
-          body.mobile-layout .nav-item { font-size: 1.05rem; padding: 12px 12px; }
-          body.mobile-layout .nav-section-title { font-size: 0.78rem; }
-          body.mobile-layout main { padding: 14px; }
-          body.mobile-layout .section-title { font-size: 1.5rem; }
-          body.mobile-layout .bot-col { font-size: 0.98rem; }
+          body.mobile-layout .page-title { font-size: 1.9rem; }
+          body.mobile-layout .nav-item { font-size: 1.15rem; padding: 14px 12px; }
+          body.mobile-layout .nav-section-title { font-size: 0.9rem; }
+          body.mobile-layout main { padding: 16px; }
+          body.mobile-layout .section-title { font-size: 1.75rem; }
+          body.mobile-layout .bot-col { font-size: 1.08rem; line-height: 1.5; }
           body.mobile-layout .section-header { gap:10px; flex-wrap: wrap; }
           body.mobile-layout .bot-list-wrap { width: 100%; flex: 1 1 auto; min-width: 0; }
           body.mobile-layout .inline-config.visible { display:block; width: 100%; }
@@ -150,7 +150,9 @@ STYLES = r"""<style>
           body.mobile-layout input,
           body.mobile-layout select,
           body.mobile-layout textarea,
-          body.mobile-layout button { font-size: 1rem; }
+          body.mobile-layout button { font-size: 1.08rem; }
+          body.mobile-layout .config-panel { padding: 18px; }
+          body.mobile-layout .config-row label { font-size: 0.95rem; }
 
           /* Hard sync top divider alignment across all pages */
           .sidebar-header,
