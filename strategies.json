@@ -3,12 +3,14 @@
     {
       "id": "inevitrade_tcl",
       "name": "Inevitrade TCL",
-      "archived": false
+      "archived": false,
+      "emoji": "\ud83e\udde0"
     },
     {
       "id": "inevitrade_ch1",
       "name": "Inevitrade CH1",
-      "archived": false
+      "archived": false,
+      "emoji": "\ud83d\udcc8"
     }
   ]
 }

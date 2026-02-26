@@ -195,7 +195,7 @@ DASHBOARD_HTML = r"""
                     <div class="config-row">
                       <div style="flex:1;">
                         <label>Emoji</label>
-                        <input id="emojiInput" placeholder="🤖" />
+                        <input id="emojiInput" list="botEmojiList" placeholder="🤖" />
                       </div>
                       <div style="flex:2;">
                         <label>Avatar URL (optional)</label>
@@ -397,6 +397,17 @@ DASHBOARD_HTML = r"""
             </div>
           </div>
         </div>
+
+        <datalist id="botEmojiList">
+          <option value="🤖"></option>
+          <option value="📈"></option>
+          <option value="📉"></option>
+          <option value="⚡"></option>
+          <option value="🎯"></option>
+          <option value="🛡️"></option>
+          <option value="🔥"></option>
+          <option value="🧠"></option>
+        </datalist>
 
         <datalist id="strategyEmojiList">
           <option value="🧠"></option>
