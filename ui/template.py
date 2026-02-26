@@ -277,18 +277,29 @@ DASHBOARD_HTML = r"""
             </section>
 
             <section id="strategies" class="section" style="margin-top:24px;">
-              <div class="section-header" style="margin-bottom:16px;">
+              <div class="section-header" style="margin-bottom:16px; display:flex; justify-content:space-between; align-items:center;">
                 <div class="section-title">Strategies</div>
+                <button class="btn-primary" onclick="showCreateStrategyModal()">Create Strategy</button>
               </div>
-              <div class="config-panel">
-                <div class="config-row">
-                  <div style="flex:1;">
-                    <label>Strategy List (JSON)</label>
-                    <textarea id="strategiesText"></textarea>
-                  </div>
+              <div class="bots-layout">
+                <div class="bot-list-wrap">
+                  <div class="bot-list" id="strategiesList"></div>
                 </div>
-                <div class="config-actions">
-                  <button class="btn-primary" onclick="saveStrategies()">Save Strategies</button>
+                <div class="inline-config visible" id="strategyPanel">
+                  <div class="config-panel">
+                    <div class="inline-config-header">
+                      <div class="section-title" id="strategyPanelTitle">Strategy</div>
+                    </div>
+                    <div class="config-row">
+                      <div style="flex:1;">
+                        <label>Markdown</label>
+                        <textarea id="strategyMarkdown"></textarea>
+                      </div>
+                    </div>
+                    <div class="config-actions">
+                      <button class="btn-primary" onclick="saveStrategyMarkdown()">Save Strategy</button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </section>
@@ -318,6 +329,22 @@ DASHBOARD_HTML = r"""
             <div class="modal-actions">
               <button class="btn-secondary" onclick="hideSaveModal()">Cancel</button>
               <button class="btn-primary" onclick="confirmSaveAll()">Save</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-overlay" id="createStrategyModal">
+          <div class="modal">
+            <div class="modal-title">Create Strategy</div>
+            <div class="modal-text">Enter a strategy name.</div>
+            <div class="config-row" style="margin-bottom: 8px;">
+              <div style="flex:1;">
+                <input id="createStrategyName" placeholder="e.g. mean-reversion" />
+              </div>
+            </div>
+            <div class="modal-actions">
+              <button class="btn-secondary" onclick="hideCreateStrategyModal()">Cancel</button>
+              <button class="btn-primary" onclick="confirmCreateStrategy()">Create</button>
             </div>
           </div>
         </div>
@@ -465,20 +492,64 @@ DASHBOARD_HTML = r"""
             document.getElementById('perBotUsage').value = JSON.stringify(data.bots || {}, null, 2);
           }
 
+          let currentStrategy = null;
+
           async function loadStrategies() {
             const res = await fetch('/api/strategies');
             const data = await res.json();
-            document.getElementById('strategiesText').value = JSON.stringify(data, null, 2);
+            const list = data.list || [];
+
             const sel = document.getElementById('strategySelect');
-            sel.innerHTML = (data.list || []).map(s => '<option value="' + s + '">' + s + '</option>').join('');
+            if (sel) sel.innerHTML = list.map(s => '<option value="' + s + '">' + s + '</option>').join('');
+
+            const container = document.getElementById('strategiesList');
+            if (container) {
+              container.innerHTML = list.map(s => '<div class="bot-row" onclick="openStrategy(\'' + s.replace(/'/g, "\\'") + '\')"><div class="bot-col bot-name">🧠 ' + s + '</div></div>').join('');
+            }
+
+            if (list.length) {
+              const remembered = localStorage.getItem('mc-selected-strategy');
+              const pick = (remembered && list.includes(remembered)) ? remembered : list[0];
+              openStrategy(pick);
+            }
           }
 
-          async function saveStrategies() {
-            let payload;
-            try { payload = JSON.parse(document.getElementById('strategiesText').value); } catch (e) { alert('Invalid JSON'); return; }
-            await fetch('/api/strategies', { method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+          async function openStrategy(name) {
+            currentStrategy = name;
+            localStorage.setItem('mc-selected-strategy', name);
+            document.getElementById('strategyPanelTitle').innerText = 'Strategy: ' + name;
+            const res = await fetch('/api/strategy/' + encodeURIComponent(name) + '/md');
+            const data = await res.json();
+            document.getElementById('strategyMarkdown').value = data.markdown || '';
+          }
+
+          async function saveStrategyMarkdown() {
+            if (!currentStrategy) return;
+            const markdown = document.getElementById('strategyMarkdown').value;
+            await fetch('/api/strategy/' + encodeURIComponent(currentStrategy) + '/md', {
+              method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ markdown })
+            });
+          }
+
+          function showCreateStrategyModal() {
+            document.getElementById('createStrategyName').value = '';
+            document.getElementById('createStrategyModal').classList.add('visible');
+            setTimeout(() => document.getElementById('createStrategyName').focus(), 50);
+          }
+
+          function hideCreateStrategyModal() {
+            document.getElementById('createStrategyModal').classList.remove('visible');
+          }
+
+          async function confirmCreateStrategy() {
+            const name = document.getElementById('createStrategyName').value.trim();
+            if (!name) return;
+            await fetch('/api/strategy/create', {
+              method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ name })
+            });
+            hideCreateStrategyModal();
             await loadStrategies();
-            alert('Saved strategies');
+            openStrategy(name);
           }
 
           let currentConfigBot = null;
@@ -548,6 +619,10 @@ DASHBOARD_HTML = r"""
 
           document.getElementById('createBotName')?.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') confirmCreateBot();
+          });
+
+          document.getElementById('createStrategyName')?.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') confirmCreateStrategy();
           });
 
           document.getElementById('botSelect')?.addEventListener('change', (e) => {

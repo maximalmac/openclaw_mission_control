@@ -355,6 +355,37 @@ def api_strategies_save(payload: dict):
     return {"ok": True}
 
 
+@app.post("/api/strategy/create")
+def api_strategy_create(payload: dict):
+    name = str(payload.get("name", "")).strip()
+    if not name:
+        raise HTTPException(400, "Name required")
+    data = load_strategies()
+    lst = data.get("list", []) if isinstance(data, dict) else []
+    if name not in lst:
+        lst.append(name)
+    data = {"list": lst}
+    save_strategies(data)
+    return {"ok": True, "name": name}
+
+
+@app.get("/api/strategy/{name}/md")
+def api_strategy_md(name: str):
+    safe = str(name).strip().replace("/", "-")
+    p = STRATEGY_MD_DIR / f"{safe}.md"
+    if not p.exists():
+        p.write_text(f"# {safe}\n\nDescribe this strategy here.\n")
+    return {"name": safe, "markdown": p.read_text()}
+
+
+@app.post("/api/strategy/{name}/md")
+def api_strategy_md_save(name: str, payload: dict):
+    safe = str(name).strip().replace("/", "-")
+    p = STRATEGY_MD_DIR / f"{safe}.md"
+    p.write_text(str(payload.get("markdown", "")))
+    return {"ok": True}
+
+
 @app.post("/api/bot/create")
 def api_bot_create(payload: dict):
     name = payload.get("name", "").strip()
