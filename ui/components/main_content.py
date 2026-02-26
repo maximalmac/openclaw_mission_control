@@ -222,7 +222,7 @@ MAIN_CONTENT = r"""<main>
               <div class="section-header" style="margin-bottom:16px;">
                 <div class="section-title">Changelog</div>
               </div>
-              <div id="changelogRender" class="config-panel" style="max-height:78vh; overflow:auto; line-height:1.6;"></div>
+              <div id="changelogRender" class="config-panel" style="line-height:1.6;"></div>
             </section>
 
             <section id="strategies" class="section" style="margin-top:24px;">
