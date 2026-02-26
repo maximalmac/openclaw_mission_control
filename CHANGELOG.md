@@ -58,6 +58,7 @@
 - Increased mobile typography scale and spacing (header, section titles, cards, forms, buttons) for better readability.
 - Added mobile viewport meta tag to enforce proper phone scaling (`width=device-width, initial-scale=1`).
 - Changelog page now renders as formatted markdown-style content instead of raw escaped text.
+- Changelog UI simplified to render directly on page (removed nested textbox/card container).
 - Added process note to keep Home Overview + Readiness Checklist updated as changes are implemented.
 - Investigate now produces synthesized strategy output and writes both strategy markdown and research report artifacts.
 - Updated **Dax** strategy scan behavior to return up to 5 ideas per run and avoid repeating previously returned strategy titles.
