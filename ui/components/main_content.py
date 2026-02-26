@@ -5,12 +5,29 @@ MAIN_CONTENT = r"""<main>
               </div>
               <div class="bot-list" style="gap:16px;">
                 <div class="config-panel">
-                  <div class="section-title" style="margin-bottom:8px;">Trading Stats</div>
-                  <div class="bot-col">Coming next: equity, open positions, daily/weekly P&L, win rate, drawdown.</div>
+                  <div class="section-title" style="margin-bottom:8px;">Mission Control Overview</div>
+                  <div class="bot-col" style="text-align:left; line-height:1.6;">
+                    <strong>What is already in place</strong><br/>
+                    • Python bot management UI (Trading + Utility bots)<br/>
+                    • Start/Stop bot controls and live/paper mode toggles<br/>
+                    • Per-bot config + SOUL editing, with unsaved-change warnings<br/>
+                    • Strategy manager (create/edit/archive/delete/reorder)<br/>
+                    • Strategy markdown version snapshots and changelog tracking<br/>
+                    • Back-Testing and Reports navigation scaffolding
+                  </div>
                 </div>
                 <div class="config-panel">
-                  <div class="section-title" style="margin-bottom:8px;">System Overview</div>
-                  <div class="bot-col">Bots online/offline, exchange connectivity, and risk summary will appear here.</div>
+                  <div class="section-title" style="margin-bottom:8px;">To reach full automation</div>
+                  <div class="bot-col" style="text-align:left; line-height:1.6;">
+                    • Standard bot runtime contract (health/status/signal/state)<br/>
+                    • Strategy → Python code generator pipeline<br/>
+                    • Reliable market data + indicator pipeline with freshness checks<br/>
+                    • Order execution engine with retries/idempotency/partial-fill handling<br/>
+                    • Risk engine (size caps, kill switches, daily loss limits)<br/>
+                    • GPT confluence gate (ALLOW/BLOCK/REDUCE_SIZE with fallback)<br/>
+                    • Backtesting, walk-forward, and reporting workflows<br/>
+                    • Exchange reconciliation and alerting/diagnostics
+                  </div>
                 </div>
               </div>
             </section>
