@@ -48,6 +48,8 @@
 - Sidebar updated with a dedicated **Strategy Research** category and Research Feed item.
 - Added **Strategy Research Reports** page with report list, report viewer, and one-click backtest trigger + result display.
 - Bot page UX polish: utility page now uses same split layout as trading (left list + right config panel), utility rows hide paper/live text, and top header/sidebar divider alignment improved.
+- Bot config panel now dynamically adapts by bot type (utility hides trading-mode and strategy controls) for cleaner utility workflows.
+- Added process note to keep Home Overview + Readiness Checklist updated as changes are implemented.
 - Investigate now produces synthesized strategy output and writes both strategy markdown and research report artifacts.
 - Updated **Dax** strategy scan behavior to return up to 5 ideas per run and avoid repeating previously returned strategy titles.
 - Dax live scan now uses real-source RSS collection and populates research feed with non-example links.

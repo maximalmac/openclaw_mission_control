@@ -188,6 +188,14 @@ SCRIPTS = r"""<script>
             location.reload();
           }
 
+          function setBotFormMode(botKind) {
+            const isUtility = botKind === 'utility';
+            const modeRow = document.getElementById('tradingModeRow');
+            const strategyRow = document.getElementById('strategyRow');
+            if (modeRow) modeRow.style.display = isUtility ? 'none' : 'block';
+            if (strategyRow) strategyRow.style.display = isUtility ? 'none' : 'block';
+          }
+
           async function loadConfig(bot) {
             const res = await fetch('/api/bot/' + bot + '/config');
             const data = await res.json();
@@ -195,8 +203,7 @@ SCRIPTS = r"""<script>
             document.getElementById('botNameInput').value = data.display_name || bot;
             document.getElementById('emojiInput').value = data.emoji || '';
             document.getElementById('avatarInput').value = data.avatar || '';
-            const modeRow = document.getElementById('tradingModeRow');
-            if (modeRow) modeRow.style.display = (data.bot_kind === 'utility') ? 'none' : 'block';
+            setBotFormMode(data.bot_kind || 'trading');
             setTradingMode(data.trading_mode || 'paper', false);
           }
 

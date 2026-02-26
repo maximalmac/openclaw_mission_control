@@ -9,11 +9,12 @@ MAIN_CONTENT = r"""<main>
                   <div class="bot-col" style="text-align:left; line-height:1.6;">
                     <strong>What is already in place</strong><br/>
                     • Python bot management UI (Trading + Utility bots)<br/>
-                    • Start/Stop bot controls and live/paper mode toggles<br/>
+                    • Start/Stop bot controls and live/paper mode toggles (trading bots)<br/>
+                    • Dynamic bot config panel by bot type (trading vs utility)<br/>
                     • Per-bot config + SOUL editing, with unsaved-change warnings<br/>
                     • Strategy manager (create/edit/archive/delete/reorder)<br/>
                     • Strategy markdown version snapshots and changelog tracking<br/>
-                    • Back-Testing and Reports navigation scaffolding
+                    • Strategy Research feed + Research Reports + backtest trigger UI
                   </div>
                 </div>
                 <div class="config-panel">
@@ -73,7 +74,7 @@ MAIN_CONTENT = r"""<main>
                         </div>
                       </div>
                     </div>
-                    <div class="config-row" style="flex:0;">
+                    <div class="config-row" id="strategyRow" style="flex:0;">
                       <div style="flex:1;">
                         <label>Strategy</label>
                         <select id="strategySelect"></select>
@@ -175,6 +176,7 @@ MAIN_CONTENT = r"""<main>
               <div class="config-panel">
                 <div class="bot-list" style="gap:10px;">
                   <div class="bot-row"><div class="bot-col bot-name">🧩 Bot Runtime Contract</div><div class="bot-col">⬜ Pending</div><div class="bot-col">Standard status/health/signal interface</div><div class="bot-col"></div></div>
+                  <div class="bot-row"><div class="bot-col bot-name">🖥️ Control Plane UX</div><div class="bot-col">✅ Done</div><div class="bot-col">Navigation, bot pages, strategy research/reports, changelog, screenshots</div><div class="bot-col"></div></div>
                   <div class="bot-row"><div class="bot-col bot-name">🧠 Strategy → Code Generator</div><div class="bot-col">⬜ Pending</div><div class="bot-col">Parse strategy markdown into runnable Python</div><div class="bot-col"></div></div>
                   <div class="bot-row"><div class="bot-col bot-name">📡 Market Data Pipeline</div><div class="bot-col">⬜ Pending</div><div class="bot-col">Candles/funding/mark-index with freshness checks</div><div class="bot-col"></div></div>
                   <div class="bot-row"><div class="bot-col bot-name">🛒 Execution Engine</div><div class="bot-col">⬜ Pending</div><div class="bot-col">Idempotent orders, retries, partial-fill handling</div><div class="bot-col"></div></div>
