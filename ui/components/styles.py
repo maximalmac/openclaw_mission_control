@@ -119,4 +119,22 @@ STYLES = r"""<style>
           .modal-title { font-weight: 600; margin-bottom: 8px; }
           .modal-text { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 14px; }
           .modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
+
+          /* Hard sync top divider alignment across all pages */
+          .sidebar-header,
+          header {
+            height: var(--topbar-height) !important;
+            min-height: var(--topbar-height) !important;
+            box-sizing: border-box;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+          }
+          .sidebar-header {
+            padding-left: 16px !important;
+            padding-right: 16px !important;
+          }
+          header {
+            padding-left: 24px !important;
+            padding-right: 24px !important;
+          }
         </style>"""

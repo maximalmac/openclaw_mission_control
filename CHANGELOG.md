@@ -51,6 +51,7 @@
 - Bot config panel now dynamically adapts by bot type (utility hides trading-mode and strategy controls) for cleaner utility workflows.
 - Standardized top divider alignment by tying sidebar header and page header to the same `--topbar-height` token.
 - Fixed CSS selector collision so sidebar header and page header both use explicit, synchronized topbar styles.
+- Added hard topbar sync rules to keep sidebar/header divider perfectly aligned even on scroll-heavy pages.
 - Added process note to keep Home Overview + Readiness Checklist updated as changes are implemented.
 - Investigate now produces synthesized strategy output and writes both strategy markdown and research report artifacts.
 - Updated **Dax** strategy scan behavior to return up to 5 ideas per run and avoid repeating previously returned strategy titles.
