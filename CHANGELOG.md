@@ -64,7 +64,8 @@
 - Reduced top spacing above changelog card to match left/right page padding.
 - Desktop bot pages now use a dynamic split width so config panel doesn’t squash bot rows/buttons.
 - Mobile bot cards now left-align Paper/Live mode text with bot name for cleaner visual grouping.
-- Usage page now fetches live OpenAI daily/weekly usage on load (`/api/usage/current`) and displays sync status.
+- Usage page now fetches current daily/weekly usage on load (`/api/usage/current`) and displays sync status.
+- Usage source switched to Mission Control runtime telemetry (OAuth/Plus compatible; no OpenAI API key dependency).
 - Added process note to keep Home Overview + Readiness Checklist updated as changes are implemented.
 - Investigate now produces synthesized strategy output and writes both strategy markdown and research report artifacts.
 - Updated **Dax** strategy scan behavior to return up to 5 ideas per run and avoid repeating previously returned strategy titles.

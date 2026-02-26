@@ -372,9 +372,9 @@ SCRIPTS = r"""<script>
             document.getElementById('weeklyCost').value = w.ok ? fmtUsd(w.cost ?? 0) : '-';
 
             if (d.ok && w.ok) {
-              document.getElementById('usageLiveStatus').value = 'Live OpenAI usage synced';
+              document.getElementById('usageLiveStatus').value = 'Runtime usage synced (' + (live.provider || 'local') + ')';
             } else {
-              document.getElementById('usageLiveStatus').value = 'Live usage unavailable: ' + (d.error || w.error || 'unknown error');
+              document.getElementById('usageLiveStatus').value = 'Runtime usage unavailable: ' + (d.error || w.error || 'unknown error');
             }
           }
 

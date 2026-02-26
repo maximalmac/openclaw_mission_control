@@ -7,8 +7,6 @@ import signal
 import subprocess
 import time
 import shutil
-import urllib.request
-import urllib.parse
 from datetime import datetime, timedelta, timezone
 from ui.template import DASHBOARD_HTML
 
@@ -21,6 +19,7 @@ STRATEGY_MD_DIR = MC_DIR / "strategies"
 STRATEGY_VERSIONS_DIR = STRATEGY_MD_DIR / "versions"
 STATE_FILE = MC_DIR / "state.json"
 USAGE_FILE = MC_DIR / "usage.json"
+USAGE_EVENTS_FILE = MC_DIR / "usage_events.json"
 STRATEGIES_FILE = MC_DIR / "strategies.json"
 BOT_ORDER_FILE = MC_DIR / "bot_order.json"
 STRATEGY_RESEARCH_FILE = MC_DIR / "strategy_research.json"
@@ -54,64 +53,65 @@ def save_usage(data):
     USAGE_FILE.write_text(json.dumps(data, indent=2))
 
 
-def _extract_usage_totals(payload: dict) -> dict:
-    """Best-effort extraction across OpenAI usage response variants."""
+def load_usage_events():
+    if USAGE_EVENTS_FILE.exists():
+        try:
+            data = json.loads(USAGE_EVENTS_FILE.read_text())
+            if isinstance(data, list):
+                return data
+        except Exception:
+            pass
+    return []
+
+
+def save_usage_events(events):
+    USAGE_EVENTS_FILE.write_text(json.dumps(events, indent=2))
+
+
+def append_usage_event(name: str, tokens_in: int, tokens_out: int, cost: float, ts: int):
+    events = load_usage_events()
+    events.append({
+        "bot": name,
+        "tokens_in": int(tokens_in),
+        "tokens_out": int(tokens_out),
+        "cost": float(cost),
+        "ts": int(ts),
+    })
+    # keep file bounded
+    if len(events) > 20000:
+        events = events[-20000:]
+    save_usage_events(events)
+
+
+def _sum_window(events, start_ts: int, end_ts: int):
     total_in = 0
     total_out = 0
     total_cost = 0.0
-
-    def walk(node):
-        nonlocal total_in, total_out, total_cost
-        if isinstance(node, dict):
-            if isinstance(node.get("input_tokens"), (int, float)):
-                total_in += int(node.get("input_tokens", 0))
-            if isinstance(node.get("output_tokens"), (int, float)):
-                total_out += int(node.get("output_tokens", 0))
-            if isinstance(node.get("cost"), (int, float)):
-                total_cost += float(node.get("cost", 0.0))
-            for v in node.values():
-                walk(v)
-        elif isinstance(node, list):
-            for item in node:
-                walk(item)
-
-    walk(payload)
+    for e in events:
+        ts = int(e.get("ts", 0))
+        if start_ts <= ts <= end_ts:
+            total_in += int(e.get("tokens_in", 0))
+            total_out += int(e.get("tokens_out", 0))
+            total_cost += float(e.get("cost", 0.0))
     return {"tokens_in": total_in, "tokens_out": total_out, "cost": round(total_cost, 6)}
 
 
-def _fetch_openai_window_usage(start_ts: int, end_ts: int) -> dict:
-    api_key = os.getenv("OPENAI_API_KEY", "").strip()
-    if not api_key:
-        return {"ok": False, "error": "OPENAI_API_KEY is not set on Mission Control host."}
-
-    base_url = "https://api.openai.com/v1/organization/usage/completions"
-    q = urllib.parse.urlencode({"start_time": start_ts, "end_time": end_ts, "bucket_width": "1d"})
-    url = f"{base_url}?{q}"
-    req = urllib.request.Request(url, headers={"Authorization": f"Bearer {api_key}"})
-
-    try:
-        with urllib.request.urlopen(req, timeout=20) as resp:
-            raw = resp.read().decode("utf-8")
-            payload = json.loads(raw)
-            totals = _extract_usage_totals(payload)
-            return {"ok": True, **totals}
-    except Exception as e:
-        return {"ok": False, "error": str(e)}
-
-
-def fetch_openai_current_usage() -> dict:
+def fetch_runtime_current_usage() -> dict:
     now = datetime.now(timezone.utc)
+    now_ts = int(now.timestamp())
     day_start = datetime(now.year, now.month, now.day, tzinfo=timezone.utc)
     week_start = day_start - timedelta(days=day_start.weekday())
 
-    daily = _fetch_openai_window_usage(int(day_start.timestamp()), int(now.timestamp()))
-    weekly = _fetch_openai_window_usage(int(week_start.timestamp()), int(now.timestamp()))
+    events = load_usage_events()
+    daily = _sum_window(events, int(day_start.timestamp()), now_ts)
+    weekly = _sum_window(events, int(week_start.timestamp()), now_ts)
 
     return {
-        "provider": "openai",
-        "daily": daily,
-        "weekly": weekly,
-        "as_of": int(now.timestamp()),
+        "provider": "mission_control_runtime",
+        "daily": {"ok": True, **daily},
+        "weekly": {"ok": True, **weekly},
+        "as_of": now_ts,
+        "notes": "Derived from Mission Control bot usage events",
     }
 
 
@@ -799,10 +799,27 @@ def api_usage():
 def api_usage_update(name: str, payload: dict):
     data = load_usage()
     bot = data.setdefault("bots", {}).setdefault(name, {"tokens_in": 0, "tokens_out": 0, "cost": 0})
-    bot["tokens_in"] = int(payload.get("tokens_in", bot["tokens_in"]))
-    bot["tokens_out"] = int(payload.get("tokens_out", bot["tokens_out"]))
-    bot["cost"] = float(payload.get("cost", bot["cost"]))
-    bot["last_seen"] = int(time.time())
+
+    prev_in = int(bot.get("tokens_in", 0))
+    prev_out = int(bot.get("tokens_out", 0))
+    prev_cost = float(bot.get("cost", 0.0))
+
+    new_in = int(payload.get("tokens_in", prev_in))
+    new_out = int(payload.get("tokens_out", prev_out))
+    new_cost = float(payload.get("cost", prev_cost))
+
+    bot["tokens_in"] = new_in
+    bot["tokens_out"] = new_out
+    bot["cost"] = new_cost
+    now_ts = int(time.time())
+    bot["last_seen"] = now_ts
+
+    # append delta event for daily/weekly windows
+    delta_in = max(0, new_in - prev_in)
+    delta_out = max(0, new_out - prev_out)
+    delta_cost = max(0.0, new_cost - prev_cost)
+    if delta_in or delta_out or delta_cost:
+        append_usage_event(name, delta_in, delta_out, delta_cost, now_ts)
 
     # recompute totals
     total_in = sum(b.get("tokens_in", 0) for b in data["bots"].values())
@@ -815,4 +832,4 @@ def api_usage_update(name: str, payload: dict):
 
 @app.get("/api/usage/current")
 def api_usage_current():
-    return fetch_openai_current_usage()
+    return fetch_runtime_current_usage()

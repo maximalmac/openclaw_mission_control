@@ -15,7 +15,7 @@ MAIN_CONTENT = r"""<main>
                     • Strategy manager (create/edit/archive/delete/reorder)<br/>
                     • Strategy markdown version snapshots and changelog tracking<br/>
                     • Strategy Research feed + Research Reports + backtest trigger UI<br/>
-                    • Usage page live pull for OpenAI daily/weekly usage snapshots
+                    • Usage page live pull for runtime daily/weekly usage snapshots
                   </div>
                 </div>
                 <div class="config-panel">
@@ -227,7 +227,7 @@ MAIN_CONTENT = r"""<main>
                 </div>
                 <div class="config-row">
                   <div style="flex:1;">
-                    <label>OpenAI Usage Status</label>
+                    <label>Runtime Usage Status</label>
                     <input id="usageLiveStatus" disabled />
                   </div>
                 </div>
