@@ -214,24 +214,6 @@ DASHBOARD_HTML = r"""
                         <textarea id="soulText"></textarea>
                       </div>
                     </div>
-                    <div class="config-row">
-                      <div style="flex:1;">
-                        <label>STRATEGY.md</label>
-                        <textarea id="strategyText"></textarea>
-                      </div>
-                    </div>
-                    <div class="config-row">
-                      <div style="flex:1;">
-                        <label>TRADE_STATE.md</label>
-                        <textarea id="stateText"></textarea>
-                      </div>
-                    </div>
-                    <div class="config-row">
-                      <div style="flex:1;">
-                        <label>TRADE_LOG.md</label>
-                        <textarea id="logText"></textarea>
-                      </div>
-                    </div>
                     <div class="config-actions" style="justify-content: space-between; align-items: center;">
                       <div>
                         <button class="btn-primary" onclick="saveAll()">Save</button>
@@ -457,9 +439,6 @@ DASHBOARD_HTML = r"""
             const res = await fetch('/api/bot/' + bot + '/files');
             const data = await res.json();
             document.getElementById('soulText').value = data.SOUL || '';
-            document.getElementById('strategyText').value = data.STRATEGY || '';
-            document.getElementById('stateText').value = data.TRADE_STATE || '';
-            document.getElementById('logText').value = data.TRADE_LOG || '';
           }
 
           async function saveConfigData() {
@@ -478,10 +457,7 @@ DASHBOARD_HTML = r"""
           async function saveFilesData() {
             const bot = document.getElementById('botSelect').value;
             const payload = {
-              SOUL: document.getElementById('soulText').value,
-              STRATEGY: document.getElementById('strategyText').value,
-              TRADE_STATE: document.getElementById('stateText').value,
-              TRADE_LOG: document.getElementById('logText').value
+              SOUL: document.getElementById('soulText').value
             };
             await fetch('/api/bot/' + bot + '/files', { method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
             return true;

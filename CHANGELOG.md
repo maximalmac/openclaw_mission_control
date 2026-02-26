@@ -10,3 +10,4 @@
 - Strategy create flow now accepts and persists selected emoji.
 - Strategy editor emoji input now uses selector list while still allowing manual emoji entry.
 - Trading bot config emoji input now uses an emoji selector list (manual entry still allowed).
+- Bot config panel now hides STRATEGY.md, TRADE_STATE.md, and TRADE_LOG.md editors (strategy is dropdown-selected; state/log reserved for reporting).
