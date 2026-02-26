@@ -137,11 +137,11 @@ DASHBOARD_HTML = r"""
           <header>
             <div class="header-left">
               <div class="page-title">Mission Control</div>
-              <div class="status-pill connected"><span class="pulse"></span>Live</div>
             </div>
             <div class="header-right">
               <div class="subtle">0.0.0.0:7777</div>
               <button class="theme-toggle" onclick="toggleTheme()">Toggle theme</button>
+              <div class="status-pill connected"><span class="pulse"></span>Live</div>
             </div>
           </header>
 
