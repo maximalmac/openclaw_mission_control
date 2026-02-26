@@ -181,6 +181,7 @@ def render_dashboard(active_page="trading-bots"):
         else:
             trading_rows.append(row_html)
 
+    utility_html = "".join(utility_rows) if utility_rows else '<div class="bot-col">No utility bots yet.</div>'
     html = DASHBOARD_HTML
     html = html.replace("{{TRADING_ROWS}}", "".join(trading_rows))
     html = html.replace("{{UTILITY_ROWS}}", utility_html)
