@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
 from pathlib import Path
 import json
 import os
@@ -307,7 +307,7 @@ def strategies_page():
     return render_dashboard("strategies")
 
 
-@app.get("/api/changelog")
+@app.get("/api/changelog", response_class=PlainTextResponse)
 def api_changelog():
     p = MC_DIR / "CHANGELOG.md"
     return p.read_text() if p.exists() else "# Changelog\n\nNo changelog yet."

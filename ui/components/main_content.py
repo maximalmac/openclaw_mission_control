@@ -223,12 +223,8 @@ MAIN_CONTENT = r"""<main>
                 <div class="section-title">Changelog</div>
               </div>
               <div class="config-panel">
-                <div class="config-row" style="margin-bottom:0;">
-                  <div style="flex:1; min-height:0; display:flex; flex-direction:column;">
-                    <label>CHANGELOG.md</label>
-                    <textarea id="changelogText" readonly style="min-height:60vh;"></textarea>
-                  </div>
-                </div>
+                <div style="font-size:0.8rem; color: var(--text-muted); margin-bottom:10px;">CHANGELOG.md</div>
+                <div id="changelogRender" class="config-panel" style="background: var(--bg); max-height:70vh; overflow:auto; line-height:1.6;"></div>
               </div>
             </section>
 

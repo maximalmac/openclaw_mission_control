@@ -98,6 +98,10 @@ STYLES = r"""<style>
           .config-row input, .config-row select, textarea { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); }
           textarea { min-height: 140px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.8rem; }
           .config-actions { display: flex; gap: 8px; margin-top: 12px; }
+          #changelogRender h1, #changelogRender h2, #changelogRender h3 { margin: 10px 0 6px; }
+          #changelogRender ul { margin: 6px 0 8px 18px; }
+          #changelogRender li { margin: 4px 0; }
+          #changelogRender p { margin: 6px 0; }
 
           /* Inline config panel */
           .bots-layout { display: flex; gap: 16px; align-items: stretch; }

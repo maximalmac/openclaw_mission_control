@@ -601,10 +601,38 @@ SCRIPTS = r"""<script>
           if (activePage === 'usage') {
             loadUsage();
           }
+          function renderMarkdownLite(md) {
+            const lines = (md || '').split('\n');
+            let html = '';
+            let inList = false;
+            for (const line of lines) {
+              if (line.startsWith('### ')) {
+                if (inList) { html += '</ul>'; inList = false; }
+                html += '<h3>' + line.slice(4) + '</h3>';
+              } else if (line.startsWith('## ')) {
+                if (inList) { html += '</ul>'; inList = false; }
+                html += '<h2>' + line.slice(3) + '</h2>';
+              } else if (line.startsWith('# ')) {
+                if (inList) { html += '</ul>'; inList = false; }
+                html += '<h1>' + line.slice(2) + '</h1>';
+              } else if (line.startsWith('- ')) {
+                if (!inList) { html += '<ul>'; inList = true; }
+                html += '<li>' + line.slice(2) + '</li>';
+              } else if (line.trim() === '') {
+                if (inList) { html += '</ul>'; inList = false; }
+              } else {
+                if (inList) { html += '</ul>'; inList = false; }
+                html += '<p>' + line + '</p>';
+              }
+            }
+            if (inList) html += '</ul>';
+            return html;
+          }
+
           if (activePage === 'changelog') {
             fetch('/api/changelog').then(r => r.text()).then(t => {
-              const el = document.getElementById('changelogText');
-              if (el) el.value = t;
+              const el = document.getElementById('changelogRender');
+              if (el) el.innerHTML = renderMarkdownLite(t);
             });
           }
           if (activePage === 'strategies') {
