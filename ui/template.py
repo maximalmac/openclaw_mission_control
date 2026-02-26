@@ -103,9 +103,11 @@ DASHBOARD_HTML = r"""
 
           /* Inline config panel */
           .bots-layout { display: flex; gap: 16px; align-items: stretch; }
+          #trading-bots .bots-layout { min-height: calc(100vh - 170px); }
           .bot-list-wrap { width: 25%; min-width: 280px; flex: 0 0 25%; }
           .inline-config { flex: 1 1 0; width: auto; min-width: 0; display: none; }
-          .inline-config.visible { display: block; }
+          .inline-config.visible { display: flex; }
+          .inline-config .config-panel { flex: 1; display: flex; flex-direction: column; }
           .full-height-card .config-panel { height: 100%; display: flex; flex-direction: column; }
           .full-height-card .config-row { flex: 1; display: flex; }
           .full-height-card .config-row > div { display: flex; flex-direction: column; }

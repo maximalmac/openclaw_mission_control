@@ -190,7 +190,7 @@ def bot_status(name: str):
     pid = bot_state.get("pid")
     if pid and is_pid_running(pid):
         return {"status": "running", "pid": pid}
-    return {"status": "stopped", "pid": None}
+    return {"status": "stopped", "pid": bot_state.get("last_pid")}
 
 
 def render_dashboard(active_page="trading-bots"):
@@ -209,7 +209,7 @@ def render_dashboard(active_page="trading-bots"):
         <div class="bot-row" draggable="true" data-bot="{b}" onclick="openConfig('{b}')">
           <div class="bot-col bot-name">{avatar_html} {profile.get('display_name', b)}</div>
           <div class="bot-col"><span class="card-badge {badge_class}">{status['status']}</span></div>
-          <div class="bot-col">{mode_badge} · PID: {status['pid'] or '-'}</div>
+          <div class="bot-col"><div>{mode_badge}</div><div>PID: {status['pid'] or '-'}</div></div>
           <div class="bot-col actions" onclick="event.stopPropagation()">
             <button class="{toggle_class}" onclick="toggleBot('{b}','{status['status']}')">{toggle_label}</button>
           </div>
@@ -296,7 +296,7 @@ def api_bot_start(name: str):
     proc = subprocess.Popen(["python3", str(bot_py)], cwd=str(d))
 
     state = load_state()
-    state.setdefault("bots", {})[name] = {"pid": proc.pid, "started_at": int(time.time())}
+    state.setdefault("bots", {})[name] = {"pid": proc.pid, "last_pid": proc.pid, "started_at": int(time.time())}
     save_state(state)
     return {"ok": True, "pid": proc.pid}
 
@@ -316,6 +316,7 @@ def api_bot_stop(name: str):
     except OSError:
         pass
 
+    bot_state["last_pid"] = pid
     bot_state["pid"] = None
     state.setdefault("bots", {})[name] = bot_state
     save_state(state)

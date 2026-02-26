@@ -25,3 +25,6 @@
 - Bot row spacing and action column sizing tuned for more consistent button visibility.
 - Fixed bot row grid sizing in narrow left panel so Start/Stop toggle is always visible.
 - Bot config panel now explicitly flexes to fill remaining horizontal space.
+- Trading Bots config panel now stretches vertically to fill remaining page height.
+- PID handling now preserves and displays last known PID after start/stop transitions.
+- Mode/PID display split onto two lines for clearer readability.
