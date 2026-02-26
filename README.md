@@ -8,4 +8,8 @@ python3 -m uvicorn mission_control.app:app --host 0.0.0.0 --port 7777
 ```
 
 Open:
-https://marks-mac-mini.tail1751ee.ts.net:7777/
+https://marks-mac-mini.tail1751ee.ts.net/
+
+Notes:
+- Tailscale Serve should proxy `/` to `http://127.0.0.1:7777`.
+- A LaunchAgent (`com.missioncontrol.tailscale-serve`) can re-apply this mapping at login/restart.
