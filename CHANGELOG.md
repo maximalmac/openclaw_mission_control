@@ -31,3 +31,4 @@
 - Removed PID from bot list row display to keep the list cleaner.
 - SOUL editor now expands to fill available vertical space in bot config panel.
 - Trading mode changes now require modal confirmation before applying.
+- Added new sidebar section **Tools** with **Back-Testing** menu item and a dedicated placeholder page.

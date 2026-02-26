@@ -244,6 +244,11 @@ def utility_bots_page():
     return render_dashboard("utility-bots")
 
 
+@app.get("/back-testing", response_class=HTMLResponse)
+def back_testing_page():
+    return render_dashboard("back-testing")
+
+
 @app.get("/usage", response_class=HTMLResponse)
 def usage_page():
     return render_dashboard("usage")

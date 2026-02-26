@@ -137,6 +137,8 @@ DASHBOARD_HTML = r"""
             <div class="nav-section-title">Bots</div>
             <a id="nav-trading-bots" class="nav-item" href="/trading-bots"><span class="nav-icon">📈</span><span>Trading Bots</span></a>
             <a id="nav-utility-bots" class="nav-item" href="/utility-bots"><span class="nav-icon">🛠️</span><span>Utility Bots</span></a>
+            <div class="nav-section-title">Tools</div>
+            <a id="nav-back-testing" class="nav-item" href="/back-testing"><span class="nav-icon">🧪</span><span>Back-Testing</span></a>
             <div class="nav-section-title">Configuration</div>
             <a id="nav-usage" class="nav-item" href="/usage"><span class="nav-icon">📊</span><span>Usage</span></a>
             <a id="nav-strategies" class="nav-item" href="/strategies"><span class="nav-icon">🧠</span><span>Strategies</span></a>
@@ -248,6 +250,15 @@ DASHBOARD_HTML = r"""
               </div>
               <div class="bot-list">
                 {{UTILITY_ROWS}}
+              </div>
+            </section>
+
+            <section id="back-testing" class="section" style="margin-top:24px;">
+              <div class="section-header" style="margin-bottom:16px;">
+                <div class="section-title">Back-Testing</div>
+              </div>
+              <div class="config-panel">
+                <div class="bot-col">Back-testing tools are coming next (dataset selection, strategy replay, and performance reports).</div>
               </div>
             </section>
 
@@ -846,6 +857,7 @@ DASHBOARD_HTML = r"""
           document.getElementById('home').style.display = activePage === 'home' ? 'block' : 'none';
           document.getElementById('trading-bots').style.display = activePage === 'trading-bots' ? 'block' : 'none';
           document.getElementById('utility-bots').style.display = activePage === 'utility-bots' ? 'block' : 'none';
+          document.getElementById('back-testing').style.display = activePage === 'back-testing' ? 'block' : 'none';
           document.getElementById('usage').style.display = activePage === 'usage' ? 'block' : 'none';
           document.getElementById('strategies').style.display = activePage === 'strategies' ? 'block' : 'none';
 
