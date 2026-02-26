@@ -102,6 +102,10 @@ DASHBOARD_HTML = r"""
           .bot-list-wrap { width: 25%; min-width: 280px; }
           .inline-config { width: 75%; display: none; }
           .inline-config.visible { display: block; }
+          .full-height-card .config-panel { height: 100%; display: flex; flex-direction: column; }
+          .full-height-card .config-row { flex: 1; display: flex; }
+          .full-height-card .config-row > div { display: flex; flex-direction: column; }
+          .full-height-card textarea { flex: 1; min-height: 0; }
           .inline-config-header { display:flex; justify-content: space-between; align-items:center; margin-bottom: 10px; }
           .close-btn { background: var(--card-bg); border: 1px solid var(--border); color: var(--text-muted); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; }
 
@@ -287,11 +291,11 @@ DASHBOARD_HTML = r"""
                   <button class="btn-primary" onclick="showCreateStrategyModal()">Create Strategy</button>
                 </div>
               </div>
-              <div class="bots-layout">
+              <div class="bots-layout" style="align-items: stretch; min-height: 70vh;">
                 <div class="bot-list-wrap">
                   <div class="bot-list" id="strategiesList"></div>
                 </div>
-                <div class="inline-config visible" id="strategyPanel">
+                <div class="inline-config visible full-height-card" id="strategyPanel">
                   <div class="config-panel">
                     <div class="inline-config-header">
                       <div class="section-title" id="strategyPanelTitle">Strategy</div>
@@ -530,8 +534,10 @@ DASHBOARD_HTML = r"""
 
             const container = document.getElementById('strategiesList');
             if (container) {
-              container.innerHTML = list.map(s => '<div class="bot-row" onclick="openStrategy(\'' + s.id.replace(/'/g, "\\'") + '\')"><div class="bot-col bot-name">🧠 ' + s.name + (s.archived ? ' <span style="opacity:.6">(archived)</span>' : '') + '</div></div>').join('');
+              container.innerHTML = list.map(s => '<div class="bot-row strategy-row" draggable="true" data-strategy-id="' + s.id + '" onclick="openStrategy(\'' + s.id.replace(/'/g, "\\'") + '\')"><div class="bot-col bot-name">🧠 ' + s.name + (s.archived ? ' <span style="opacity:.6">(archived)</span>' : '') + '</div></div>').join('');
             }
+
+            wireStrategyDragAndDrop();
 
             if (list.length) {
               const remembered = localStorage.getItem('mc-selected-strategy');
@@ -539,6 +545,36 @@ DASHBOARD_HTML = r"""
               const pick = (remembered && ids.includes(remembered)) ? remembered : list[0].id;
               openStrategy(pick);
             }
+          }
+
+          function wireStrategyDragAndDrop() {
+            let dragged = null;
+            const rows = document.querySelectorAll('.strategy-row');
+            rows.forEach(row => {
+              row.addEventListener('dragstart', () => {
+                dragged = row;
+                row.classList.add('dragging');
+              });
+              row.addEventListener('dragend', () => {
+                row.classList.remove('dragging');
+                document.querySelectorAll('.strategy-row').forEach(r => r.classList.remove('drop-target'));
+              });
+              row.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                if (row !== dragged) row.classList.add('drop-target');
+              });
+              row.addEventListener('dragleave', () => row.classList.remove('drop-target'));
+              row.addEventListener('drop', async (e) => {
+                e.preventDefault();
+                row.classList.remove('drop-target');
+                if (!dragged || row === dragged) return;
+                const parent = row.parentNode;
+                parent.insertBefore(dragged, row);
+                const order = Array.from(parent.querySelectorAll('.strategy-row')).map(el => el.getAttribute('data-strategy-id'));
+                await fetch('/api/strategies/order', { method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ order }) });
+                await loadStrategies();
+              });
+            });
           }
 
           async function openStrategy(id) {

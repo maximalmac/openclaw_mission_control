@@ -388,6 +388,23 @@ def api_strategies_save(payload: dict):
     return {"ok": True}
 
 
+@app.post("/api/strategies/order")
+def api_strategies_order(payload: dict):
+    order = payload.get("order", [])
+    if not isinstance(order, list):
+        raise HTTPException(400, "order must be list")
+    data = load_strategies()
+    items = data.get("list", [])
+    by_id = {x.get("id"): x for x in items if isinstance(x, dict) and x.get("id")}
+    reordered = [by_id[sid] for sid in order if sid in by_id]
+    for x in items:
+        sid = x.get("id") if isinstance(x, dict) else None
+        if sid and sid not in order:
+            reordered.append(x)
+    save_strategies({"list": reordered})
+    return {"ok": True}
+
+
 @app.post("/api/strategy/create")
 def api_strategy_create(payload: dict):
     name = str(payload.get("name", "")).strip()
