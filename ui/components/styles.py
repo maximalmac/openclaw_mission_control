@@ -123,31 +123,34 @@ STYLES = r"""<style>
 
           .sidebar-backdrop { display:none; }
 
-          @media (max-width: 1100px), (hover: none) and (pointer: coarse) {
-            body { font-size: 18px; }
-            .mobile-menu-btn { display:inline-flex; }
-            .subtle, .theme-toggle, .status-pill { display:none; }
-            .sidebar { transform: translateX(-100%); transition: transform .2s ease; width: 82vw; max-width: 340px; }
-            .sidebar.mobile-open { transform: translateX(0); }
-            .sidebar-backdrop { display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 55; }
-            .sidebar-backdrop.visible { display:block; }
-            .main-wrapper { margin-left: 0; width: 100%; }
-            .page-title { font-size: 1.6rem; }
-            .nav-item { font-size: 1.05rem; padding: 12px 12px; }
-            .nav-section-title { font-size: 0.78rem; }
-            main { padding: 14px; }
-            .section-title { font-size: 1.5rem; }
-            .bot-col { font-size: 0.98rem; }
-            .section-header { gap:10px; flex-wrap: wrap; }
-            .bot-list-wrap { width: 100%; flex: 1 1 auto; min-width: 0; }
-            .inline-config.visible { display:block; width: 100%; }
-            .bots-layout { flex-direction: column; }
-            .bot-row { grid-template-columns: 1fr 0.8fr; grid-auto-rows: auto; }
-            .bot-row .bot-col:nth-child(3) { text-align: right; }
-            .bot-row .actions { justify-content: flex-end; }
-            .actions button { width: 92px; min-width: 92px; font-size: 0.95rem; }
-            input, select, textarea, button { font-size: 1rem; }
-          }
+          body.mobile-layout { font-size: 18px; }
+          body.mobile-layout .mobile-menu-btn { display:inline-flex; }
+          body.mobile-layout .subtle,
+          body.mobile-layout .theme-toggle,
+          body.mobile-layout .status-pill { display:none; }
+          body.mobile-layout .sidebar { transform: translateX(-100%); transition: transform .2s ease; width: 82vw; max-width: 340px; }
+          body.mobile-layout .sidebar.mobile-open { transform: translateX(0); }
+          body.mobile-layout .sidebar-backdrop { display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 55; }
+          body.mobile-layout .sidebar-backdrop.visible { display:block; }
+          body.mobile-layout .main-wrapper { margin-left: 0; width: 100%; }
+          body.mobile-layout .page-title { font-size: 1.6rem; }
+          body.mobile-layout .nav-item { font-size: 1.05rem; padding: 12px 12px; }
+          body.mobile-layout .nav-section-title { font-size: 0.78rem; }
+          body.mobile-layout main { padding: 14px; }
+          body.mobile-layout .section-title { font-size: 1.5rem; }
+          body.mobile-layout .bot-col { font-size: 0.98rem; }
+          body.mobile-layout .section-header { gap:10px; flex-wrap: wrap; }
+          body.mobile-layout .bot-list-wrap { width: 100%; flex: 1 1 auto; min-width: 0; }
+          body.mobile-layout .inline-config.visible { display:block; width: 100%; }
+          body.mobile-layout .bots-layout { flex-direction: column; }
+          body.mobile-layout .bot-row { grid-template-columns: 1fr 0.8fr; grid-auto-rows: auto; }
+          body.mobile-layout .bot-row .bot-col:nth-child(3) { text-align: right; }
+          body.mobile-layout .bot-row .actions { justify-content: flex-end; }
+          body.mobile-layout .actions button { width: 92px; min-width: 92px; font-size: 0.95rem; }
+          body.mobile-layout input,
+          body.mobile-layout select,
+          body.mobile-layout textarea,
+          body.mobile-layout button { font-size: 1rem; }
 
           /* Hard sync top divider alignment across all pages */
           .sidebar-header,
