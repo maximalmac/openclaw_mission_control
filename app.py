@@ -21,9 +21,10 @@ USAGE_FILE = MC_DIR / "usage.json"
 STRATEGIES_FILE = MC_DIR / "strategies.json"
 BOT_ORDER_FILE = MC_DIR / "bot_order.json"
 STRATEGY_RESEARCH_FILE = MC_DIR / "strategy_research.json"
+RESEARCH_REPORTS_DIR = MC_DIR / "strategy_research_reports"
 TEMPLATE_DIR = AGENTS_ROOT / "bot-template"
 
-for d in [AGENTS_ROOT, TRADING_BOTS_DIR, UTILITY_BOTS_DIR, STRATEGY_MD_DIR, STRATEGY_VERSIONS_DIR]:
+for d in [AGENTS_ROOT, TRADING_BOTS_DIR, UTILITY_BOTS_DIR, STRATEGY_MD_DIR, STRATEGY_VERSIONS_DIR, RESEARCH_REPORTS_DIR]:
     d.mkdir(parents=True, exist_ok=True)
 
 app = FastAPI()
@@ -313,6 +314,29 @@ def api_strategy_research_save(payload: dict):
     data.setdefault("items", [])
     save_strategy_research(data)
     return {"ok": True}
+
+
+@app.post("/api/strategy-research/investigate")
+def api_strategy_research_investigate(payload: dict):
+    item_index = int(payload.get("index", -1))
+    data = load_strategy_research()
+    items = data.get("items", [])
+    if item_index < 0 or item_index >= len(items):
+        raise HTTPException(400, "Invalid research item index")
+
+    item = items[item_index]
+    item["status"] = "investigate"
+    item["investigation_started_at"] = int(time.time())
+    save_strategy_research(data)
+
+    bot_py = UTILITY_BOTS_DIR / "deep_researcher" / "bot.py"
+    if bot_py.exists():
+        try:
+            subprocess.Popen(["python3", str(bot_py), str(item_index)], cwd=str(bot_py.parent))
+        except Exception:
+            pass
+
+    return {"ok": True, "status": "investigate"}
 
 
 @app.get("/api/bots")

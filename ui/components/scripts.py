@@ -66,9 +66,10 @@ SCRIPTS = r"""<script>
 
           async function markResearchInvestigate(i) {
             if (!researchFeed.items || !researchFeed.items[i]) return;
-            researchFeed.items[i].status = 'investigate';
-            await saveResearchFeed();
-            renderResearchFeed();
+            await fetch('/api/strategy-research/investigate', {
+              method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ index: i })
+            });
+            await loadResearchFeed();
           }
 
           async function refreshResearchFeed() {
