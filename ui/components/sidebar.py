@@ -10,8 +10,10 @@ SIDEBAR = r"""<aside class="sidebar">
             <div class="nav-section-title">Bots</div>
             <a id="nav-trading-bots" class="nav-item" href="/trading-bots"><span class="nav-icon">📈</span><span>Trading Bots</span></a>
             <a id="nav-utility-bots" class="nav-item" href="/utility-bots"><span class="nav-icon">🛠️</span><span>Utility Bots</span></a>
+            <div class="nav-section-title">Tools</div>
+            <a id="nav-back-testing" class="nav-item" href="/back-testing"><span class="nav-icon">🧪</span><span>Back-Testing</span></a>
             <div class="nav-section-title">Report</div>
-            <a id="nav-back-testing" class="nav-item" href="/back-testing"><span class="nav-icon">🧪</span><span>Back-Testing Reports</span></a>
+            <a id="nav-back-testing-reports" class="nav-item" href="/back-testing-reports"><span class="nav-icon">📄</span><span>Back-Testing Reports</span></a>
             <div class="nav-section-title">Configuration</div>
             <a id="nav-usage" class="nav-item" href="/usage"><span class="nav-icon">📊</span><span>Usage</span></a>
             <a id="nav-strategies" class="nav-item" href="/strategies"><span class="nav-icon">🧠</span><span>Strategies</span></a>

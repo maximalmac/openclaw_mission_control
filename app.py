@@ -249,6 +249,11 @@ def back_testing_page():
     return render_dashboard("back-testing")
 
 
+@app.get("/back-testing-reports", response_class=HTMLResponse)
+def back_testing_reports_page():
+    return render_dashboard("back-testing-reports")
+
+
 @app.get("/usage", response_class=HTMLResponse)
 def usage_page():
     return render_dashboard("usage")

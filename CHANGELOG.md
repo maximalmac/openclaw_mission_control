@@ -33,4 +33,4 @@
 - Trading mode changes now require modal confirmation before applying.
 - Added new sidebar section **Tools** with **Back-Testing** menu item and a dedicated placeholder page.
 - Refactored UI template into smaller component files (styles, sidebar, main content, modals, scripts) to keep template code maintainable.
-- Sidebar navigation updated: added **Report** section before Configuration and moved Back-Testing item there as **Back-Testing Reports**.
+- Sidebar navigation updated: restored **Tools** with **Back-Testing** and added separate **Report** section with **Back-Testing Reports**.
