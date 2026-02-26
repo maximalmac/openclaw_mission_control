@@ -124,6 +124,41 @@ MAIN_CONTENT = r"""<main>
               </div>
             </section>
 
+            <section id="strategy-research-reports" class="section" style="margin-top:24px;">
+              <div class="section-header" style="margin-bottom:16px;">
+                <div class="section-title">Strategy Research Reports</div>
+              </div>
+              <div class="bots-layout" style="align-items: stretch; min-height: 70vh;">
+                <div class="bot-list-wrap">
+                  <div class="bot-list" id="researchReportsList"></div>
+                </div>
+                <div class="inline-config visible full-height-card" style="flex:1;" id="researchReportPanel">
+                  <div class="config-panel">
+                    <div class="inline-config-header">
+                      <div class="section-title" id="researchReportTitle">Research Report</div>
+                    </div>
+                    <div class="config-row" style="flex:0;">
+                      <div style="flex:1; display:flex; gap:8px; justify-content:flex-end;">
+                        <button class="btn-primary" onclick="runBacktestForCurrentReport()">Run Backtest</button>
+                      </div>
+                    </div>
+                    <div class="config-row" style="flex:1; min-height:0;">
+                      <div style="flex:1; min-height:0; display:flex; flex-direction:column;">
+                        <label>Report</label>
+                        <textarea id="researchReportMarkdown" readonly style="flex:1; min-height:260px;"></textarea>
+                      </div>
+                    </div>
+                    <div class="config-row" style="flex:0;">
+                      <div style="flex:1; min-height:0; display:flex; flex-direction:column;">
+                        <label>Backtest Result</label>
+                        <textarea id="researchBacktestResult" readonly style="min-height:180px;"></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
             <section id="back-testing" class="section" style="margin-top:24px;">
               <div class="section-header" style="margin-bottom:16px;">
                 <div class="section-title">Back-Testing Reports</div>

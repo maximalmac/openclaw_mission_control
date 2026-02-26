@@ -76,6 +76,55 @@ SCRIPTS = r"""<script>
             await loadResearchFeed();
           }
 
+          let currentResearchReportId = null;
+
+          async function loadResearchReports() {
+            const res = await fetch('/api/strategy-research-reports');
+            const data = await res.json();
+            const items = data.items || [];
+            const list = document.getElementById('researchReportsList');
+            if (!list) return;
+            if (!items.length) {
+              list.innerHTML = '<div class="bot-col">No reports yet. Trigger Investigate on a research card first.</div>';
+              return;
+            }
+            list.innerHTML = items.map(r => '<div class="bot-row" onclick="openResearchReport(\'' + r.id.replace(/'/g, "\\'") + '\')"><div class="bot-col bot-name">📄 ' + r.title + '</div></div>').join('');
+            const remembered = localStorage.getItem('mc-selected-research-report');
+            const ids = items.map(x => x.id);
+            const pick = (remembered && ids.includes(remembered)) ? remembered : items[0].id;
+            openResearchReport(pick);
+          }
+
+          async function openResearchReport(reportId) {
+            currentResearchReportId = reportId;
+            localStorage.setItem('mc-selected-research-report', reportId);
+            const res = await fetch('/api/strategy-research-report/' + encodeURIComponent(reportId));
+            const data = await res.json();
+            document.getElementById('researchReportTitle').innerText = 'Research Report: ' + reportId;
+            document.getElementById('researchReportMarkdown').value = data.markdown || '';
+            await loadBacktestResult(reportId);
+          }
+
+          async function runBacktestForCurrentReport() {
+            if (!currentResearchReportId) return;
+            await fetch('/api/backtest/run', {
+              method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ report_id: currentResearchReportId })
+            });
+            await loadBacktestResult(currentResearchReportId);
+          }
+
+          async function loadBacktestResult(reportId) {
+            const res = await fetch('/api/backtest/results?report_id=' + encodeURIComponent(reportId));
+            const data = await res.json();
+            const el = document.getElementById('researchBacktestResult');
+            if (!el) return;
+            if (!data.exists) {
+              el.value = 'No backtest result yet. Click Run Backtest.';
+              return;
+            }
+            el.value = JSON.stringify(data, null, 2);
+          }
+
           function showConfidenceInfoModal() {
             document.getElementById('confidenceInfoModal').classList.add('visible');
           }
@@ -491,6 +540,7 @@ SCRIPTS = r"""<script>
           document.getElementById('trading-bots').style.display = activePage === 'trading-bots' ? 'block' : 'none';
           document.getElementById('utility-bots').style.display = activePage === 'utility-bots' ? 'block' : 'none';
           document.getElementById('strategy-research').style.display = activePage === 'strategy-research' ? 'block' : 'none';
+          document.getElementById('strategy-research-reports').style.display = activePage === 'strategy-research-reports' ? 'block' : 'none';
           document.getElementById('back-testing').style.display = (activePage === 'back-testing' || activePage === 'back-testing-reports') ? 'block' : 'none';
           document.getElementById('readiness').style.display = activePage === 'readiness' ? 'block' : 'none';
           document.getElementById('usage').style.display = activePage === 'usage' ? 'block' : 'none';
@@ -504,6 +554,9 @@ SCRIPTS = r"""<script>
           }
           if (activePage === 'strategy-research') {
             loadResearchFeed();
+          }
+          if (activePage === 'strategy-research-reports') {
+            loadResearchReports();
           }
           if (activePage === 'usage') {
             loadUsage();

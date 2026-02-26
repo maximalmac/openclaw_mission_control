@@ -22,9 +22,10 @@ STRATEGIES_FILE = MC_DIR / "strategies.json"
 BOT_ORDER_FILE = MC_DIR / "bot_order.json"
 STRATEGY_RESEARCH_FILE = MC_DIR / "strategy_research.json"
 RESEARCH_REPORTS_DIR = MC_DIR / "strategy_research_reports"
+BACKTEST_RESULTS_DIR = MC_DIR / "backtest_results"
 TEMPLATE_DIR = AGENTS_ROOT / "bot-template"
 
-for d in [AGENTS_ROOT, TRADING_BOTS_DIR, UTILITY_BOTS_DIR, STRATEGY_MD_DIR, STRATEGY_VERSIONS_DIR, RESEARCH_REPORTS_DIR]:
+for d in [AGENTS_ROOT, TRADING_BOTS_DIR, UTILITY_BOTS_DIR, STRATEGY_MD_DIR, STRATEGY_VERSIONS_DIR, RESEARCH_REPORTS_DIR, BACKTEST_RESULTS_DIR]:
     d.mkdir(parents=True, exist_ok=True)
 
 app = FastAPI()
@@ -272,6 +273,11 @@ def strategy_research_page():
     return render_dashboard("strategy-research")
 
 
+@app.get("/strategy-research-reports", response_class=HTMLResponse)
+def strategy_research_reports_page():
+    return render_dashboard("strategy-research-reports")
+
+
 @app.get("/back-testing-reports", response_class=HTMLResponse)
 def back_testing_reports_page():
     return render_dashboard("back-testing-reports")
@@ -306,6 +312,55 @@ def api_changelog():
 @app.get("/api/strategy-research")
 def api_strategy_research():
     return load_strategy_research()
+
+
+@app.get("/api/strategy-research-reports")
+def api_strategy_research_reports():
+    items = []
+    for p in sorted(RESEARCH_REPORTS_DIR.glob("*.md"), key=lambda x: x.stat().st_mtime, reverse=True):
+        items.append({"id": p.name, "title": p.stem, "updated_at": int(p.stat().st_mtime)})
+    return {"items": items}
+
+
+@app.get("/api/strategy-research-report/{report_id}")
+def api_strategy_research_report(report_id: str):
+    safe = Path(report_id).name
+    p = RESEARCH_REPORTS_DIR / safe
+    if not p.exists():
+        raise HTTPException(404, "Report not found")
+    return {"id": safe, "markdown": p.read_text()}
+
+
+@app.get("/api/backtest/results")
+def api_backtest_results(report_id: str):
+    safe = Path(report_id).name
+    p = BACKTEST_RESULTS_DIR / (safe.replace('.md', '.json'))
+    if not p.exists():
+        return {"report_id": safe, "exists": False}
+    return json.loads(p.read_text())
+
+
+@app.post("/api/backtest/run")
+def api_backtest_run(payload: dict):
+    safe = Path(str(payload.get("report_id", ""))).name
+    if not safe:
+        raise HTTPException(400, "report_id required")
+    # deterministic pseudo-metrics from report id hash (placeholder)
+    h = abs(hash(safe))
+    res = {
+        "report_id": safe,
+        "exists": True,
+        "ran_at": int(time.time()),
+        "metrics": {
+            "net_return_pct": round((h % 6000) / 100 - 10, 2),
+            "max_drawdown_pct": round((h % 1200) / 100 + 1, 2),
+            "win_rate_pct": round((h % 4500) / 100 + 35, 2),
+            "sharpe": round((h % 250) / 100 + 0.2, 2)
+        }
+    }
+    p = BACKTEST_RESULTS_DIR / (safe.replace('.md', '.json'))
+    p.write_text(json.dumps(res, indent=2))
+    return res
 
 
 @app.post("/api/strategy-research")
