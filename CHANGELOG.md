@@ -44,5 +44,5 @@
 - Added utility bot scaffold **DAX** (`agents/utility/dax`) and validated a test run writing into `strategy_research.json`.
 - Added **Changelog** page in the Mission Control UI (Configuration section), backed by `CHANGELOG.md`.
 - Added a richer **Mission Control Overview** block on the Home dashboard summarizing current capabilities and key missing pieces for full automation.
-- Added utility bot **Deep Researcher** (`agents/utility/deep_researcher`) and wired Investigate action to trigger deep research runs.
+- Added utility bot **Bashir** (`agents/utility/bashir`) and wired Investigate action to trigger deep research runs.
 - Investigate now produces synthesized strategy output and writes both strategy markdown and research report artifacts.

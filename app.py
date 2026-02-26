@@ -329,7 +329,7 @@ def api_strategy_research_investigate(payload: dict):
     item["investigation_started_at"] = int(time.time())
     save_strategy_research(data)
 
-    bot_py = UTILITY_BOTS_DIR / "deep_researcher" / "bot.py"
+    bot_py = UTILITY_BOTS_DIR / "bashir" / "bot.py"
     if bot_py.exists():
         try:
             subprocess.Popen(["python3", str(bot_py), str(item_index)], cwd=str(bot_py.parent))
