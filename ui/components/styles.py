@@ -106,8 +106,8 @@ STYLES = r"""<style>
           /* Inline config panel */
           .bots-layout { display: flex; gap: 16px; align-items: stretch; }
           #trading-bots .bots-layout { min-height: calc(100vh - 170px); }
-          .bot-list-wrap { width: 25%; min-width: 280px; flex: 0 0 25%; }
-          .inline-config { flex: 1 1 0; width: auto; min-width: 0; display: none; }
+          .bot-list-wrap { flex: 0 0 clamp(360px, 38%, 560px); min-width: 340px; max-width: 560px; }
+          .inline-config { flex: 1 1 auto; width: auto; min-width: 420px; display: none; }
           .inline-config.visible { display: flex; }
           .inline-config .config-panel { flex: 1; display: flex; flex-direction: column; }
           .full-height-card .config-panel { height: 100%; display: flex; flex-direction: column; }
@@ -126,6 +126,11 @@ STYLES = r"""<style>
           .modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
 
           .sidebar-backdrop { display:none; }
+
+          @media (max-width: 1400px) {
+            .bot-list-wrap { flex-basis: clamp(320px, 42%, 500px); min-width: 320px; }
+            .inline-config { min-width: 360px; }
+          }
 
           body.mobile-layout { font-size: 20px; }
           body.mobile-layout .mobile-menu-btn { display:inline-flex; }

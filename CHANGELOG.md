@@ -62,6 +62,7 @@
 - Changelog card now grows with content (removed internal scroll area/max-height).
 - Removed outer "Changelog" heading so the page starts directly with the rendered changelog card.
 - Reduced top spacing above changelog card to match left/right page padding.
+- Desktop bot pages now use a dynamic split width so config panel doesn’t squash bot rows/buttons.
 - Added process note to keep Home Overview + Readiness Checklist updated as changes are implemented.
 - Investigate now produces synthesized strategy output and writes both strategy markdown and research report artifacts.
 - Updated **Dax** strategy scan behavior to return up to 5 ideas per run and avoid repeating previously returned strategy titles.
