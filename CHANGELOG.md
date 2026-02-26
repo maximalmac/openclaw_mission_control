@@ -50,6 +50,7 @@
 - Bot page UX polish: utility page now uses same split layout as trading (left list + right config panel), utility rows hide paper/live text, and top header/sidebar divider alignment improved.
 - Bot config panel now dynamically adapts by bot type (utility hides trading-mode and strategy controls) for cleaner utility workflows.
 - Standardized top divider alignment by tying sidebar header and page header to the same `--topbar-height` token.
+- Fixed CSS selector collision so sidebar header and page header both use explicit, synchronized topbar styles.
 - Added process note to keep Home Overview + Readiness Checklist updated as changes are implemented.
 - Investigate now produces synthesized strategy output and writes both strategy markdown and research report artifacts.
 - Updated **Dax** strategy scan behavior to return up to 5 ideas per run and avoid repeating previously returned strategy titles.
