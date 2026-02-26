@@ -1,0 +1,15 @@
+{
+  "total": {
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "cost": 0.0
+  },
+  "bots": {
+    "cally": {
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "cost": 0.0,
+      "last_seen": 1772079583
+    }
+  }
+}
