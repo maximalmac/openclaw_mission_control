@@ -36,6 +36,9 @@
 - Sidebar navigation updated: restored **Tools** with **Back-Testing** and added separate **Report** section with **Back-Testing Reports**.
 - Added **Readiness Checklist** report page with production-readiness milestones for automated trading rollout.
 - Added **Strategy Research** page under Tools with JSON feed storage for popular/latest strategy leads.
+- Strategy Research page now renders feed items as blog-style cards with synopsis and action buttons (Discard / Investigate).
+- Utility bot naming adjusted to **Dax** display name.
+- Trading mode controls are now hidden for utility bots in bot config.
 - Added utility bot scaffold **DAX** (`agents/utility/dax`) and validated a test run writing into `strategy_research.json`.
 - Added **Changelog** page in the Mission Control UI (Configuration section), backed by `CHANGELOG.md`.
 - Added a richer **Mission Control Overview** block on the Home dashboard summarizing current capabilities and key missing pieces for full automation.

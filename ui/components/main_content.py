@@ -64,7 +64,7 @@ MAIN_CONTENT = r"""<main>
                         <input id="avatarInput" placeholder="https://..." />
                       </div>
                     </div>
-                    <div class="config-row" style="flex:0;">
+                    <div class="config-row" id="tradingModeRow" style="flex:0;">
                       <div style="flex:1;">
                         <label>Trading Mode</label>
                         <div style="display:flex; gap:8px;">
@@ -114,15 +114,10 @@ MAIN_CONTENT = r"""<main>
             <section id="strategy-research" class="section" style="margin-top:24px;">
               <div class="section-header" style="margin-bottom:16px; display:flex; justify-content:space-between; align-items:center;">
                 <div class="section-title">Strategy Research Feed</div>
-                <button class="btn-primary" onclick="saveResearchFeed()">Save Feed</button>
+                <button class="btn-primary" onclick="refreshResearchFeed()">Refresh</button>
               </div>
-              <div class="config-panel">
-                <div class="config-row" style="margin-bottom:0;">
-                  <div style="flex:1; min-height:0; display:flex; flex-direction:column;">
-                    <label>Most Popular + Latest Strategy Leads (JSON)</label>
-                    <textarea id="strategyResearchText" style="min-height:60vh;" placeholder='{"items":[{"title":"Funding rate mean reversion","source":"YouTube","url":"https://...","confidence":0.62,"status":"new"}]}'></textarea>
-                  </div>
-                </div>
+              <div class="config-panel" style="min-height:70vh;">
+                <div id="strategyResearchCards" class="bot-list" style="gap:12px;"></div>
               </div>
             </section>
 

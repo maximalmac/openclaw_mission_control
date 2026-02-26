@@ -8,21 +8,71 @@ SCRIPTS = r"""<script>
             localStorage.setItem('mc-theme', next);
           }
 
+          let researchFeed = { items: [] };
+
+          function researchCardHtml(item, idx) {
+            const status = item.status || 'new';
+            const badge = status === 'investigate' ? '🟡 Investigate' : status === 'discarded' ? '⚪ Discarded' : '🆕 New';
+            const confidence = (item.confidence !== undefined && item.confidence !== null) ? ('Confidence: ' + item.confidence) : '';
+            const url = item.url ? '<a href="' + item.url + '" target="_blank" rel="noopener">Source</a>' : '';
+            return '<div class="config-panel" style="margin-bottom:10px;">'
+              + '<div style="display:flex; justify-content:space-between; gap:10px; align-items:center;">'
+              + '<div style="font-weight:600;">' + (item.title || 'Untitled strategy') + '</div>'
+              + '<div class="bot-col">' + badge + '</div>'
+              + '</div>'
+              + '<div class="bot-col" style="text-align:left; margin-top:6px;">'
+              + (item.synopsis || item.notes || 'No synopsis yet.')
+              + '</div>'
+              + '<div class="bot-col" style="text-align:left; margin-top:8px;">'
+              + (item.source ? ('Source: ' + item.source + ' · ') : '') + confidence + (url ? (' · ' + url) : '')
+              + '</div>'
+              + '<div style="display:flex; gap:8px; justify-content:flex-end; margin-top:10px;">'
+              + '<button class="btn-secondary" onclick="markResearchDiscard(' + idx + ')">Discard</button>'
+              + '<button class="btn-primary" onclick="markResearchInvestigate(' + idx + ')">Investigate</button>'
+              + '</div>'
+              + '</div>';
+          }
+
+          function renderResearchFeed() {
+            const container = document.getElementById('strategyResearchCards');
+            if (!container) return;
+            const items = researchFeed.items || [];
+            if (!items.length) {
+              container.innerHTML = '<div class="bot-col">No strategy leads yet.</div>';
+              return;
+            }
+            container.innerHTML = items.map((x, i) => researchCardHtml(x, i)).join('');
+          }
+
           async function loadResearchFeed() {
             const res = await fetch('/api/strategy-research');
-            const data = await res.json();
-            const el = document.getElementById('strategyResearchText');
-            if (el) el.value = JSON.stringify(data, null, 2);
+            researchFeed = await res.json();
+            researchFeed.items = researchFeed.items || [];
+            renderResearchFeed();
           }
 
           async function saveResearchFeed() {
-            const el = document.getElementById('strategyResearchText');
-            if (!el) return;
-            let payload;
-            try { payload = JSON.parse(el.value || '{"items":[]}'); } catch (e) { alert('Invalid JSON'); return; }
             await fetch('/api/strategy-research', {
-              method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload)
+              method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(researchFeed)
             });
+          }
+
+          async function markResearchDiscard(i) {
+            if (!researchFeed.items || !researchFeed.items[i]) return;
+            researchFeed.items[i].status = 'discarded';
+            await saveResearchFeed();
+            renderResearchFeed();
+          }
+
+          async function markResearchInvestigate(i) {
+            if (!researchFeed.items || !researchFeed.items[i]) return;
+            researchFeed.items[i].status = 'investigate';
+            await saveResearchFeed();
+            renderResearchFeed();
+          }
+
+          async function refreshResearchFeed() {
+            await loadResearchFeed();
           }
 
           async function loadBots() {
@@ -87,6 +137,8 @@ SCRIPTS = r"""<script>
             document.getElementById('botNameInput').value = data.display_name || bot;
             document.getElementById('emojiInput').value = data.emoji || '';
             document.getElementById('avatarInput').value = data.avatar || '';
+            const modeRow = document.getElementById('tradingModeRow');
+            if (modeRow) modeRow.style.display = (data.bot_kind === 'utility') ? 'none' : 'block';
             setTradingMode(data.trading_mode || 'paper', false);
           }
 
