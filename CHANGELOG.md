@@ -32,3 +32,4 @@
 - SOUL editor now expands to fill available vertical space in bot config panel.
 - Trading mode changes now require modal confirmation before applying.
 - Added new sidebar section **Tools** with **Back-Testing** menu item and a dedicated placeholder page.
+- Refactored UI template into smaller component files (styles, sidebar, main content, modals, scripts) to keep template code maintainable.
