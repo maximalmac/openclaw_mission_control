@@ -1,13 +1,13 @@
 {
   "list": [
     {
-      "id": "inevitrade_ch1",
-      "name": "Inevitrade CH1",
+      "id": "inevitrade_tcl",
+      "name": "Inevitrade TCL",
       "archived": false
     },
     {
-      "id": "inevitrade_tcl",
-      "name": "Inevitrade TCL",
+      "id": "inevitrade_ch1",
+      "name": "Inevitrade CH1",
       "archived": false
     }
   ]

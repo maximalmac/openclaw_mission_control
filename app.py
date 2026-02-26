@@ -63,13 +63,15 @@ def normalize_strategies(data: dict) -> dict:
             name = str(item.get("name", "")).strip()
             sid = str(item.get("id", "")).strip() or strategy_slug(name)
             archived = bool(item.get("archived", False))
+            emoji = str(item.get("emoji", "🧠")).strip() or "🧠"
         else:
             name = str(item).strip()
             sid = strategy_slug(name)
             archived = False
+            emoji = "🧠"
         if not name or not sid:
             continue
-        out.append({"id": sid, "name": name, "archived": archived})
+        out.append({"id": sid, "name": name, "archived": archived, "emoji": emoji})
     # dedupe by id preserving order
     seen = set(); dedup=[]
     for x in out:
@@ -411,10 +413,11 @@ def api_strategy_create(payload: dict):
     if not name:
         raise HTTPException(400, "Name required")
     sid = strategy_slug(name)
+    emoji = str(payload.get("emoji", "🧠")).strip() or "🧠"
     data = load_strategies()
     lst = data.get("list", [])
     if not any(x.get("id") == sid for x in lst):
-        lst.append({"id": sid, "name": name})
+        lst.append({"id": sid, "name": name, "emoji": emoji, "archived": False})
     save_strategies({"list": lst})
     return {"ok": True, "name": name, "id": sid}
 
@@ -454,6 +457,25 @@ def api_strategy_archive(sid: str, payload: dict):
     for item in data.get("list", []):
         if item.get("id") == safe:
             item["archived"] = archived
+            changed = True
+            break
+    if not changed:
+        raise HTTPException(404, "Strategy not found")
+    save_strategies(data)
+    return {"ok": True}
+
+
+@app.post("/api/strategy/{sid}/meta")
+def api_strategy_meta(sid: str, payload: dict):
+    safe = strategy_slug(sid)
+    data = load_strategies()
+    changed = False
+    for item in data.get("list", []):
+        if item.get("id") == safe:
+            if "emoji" in payload:
+                item["emoji"] = str(payload.get("emoji") or "🧠")
+            if "name" in payload and str(payload.get("name","")).strip():
+                item["name"] = str(payload.get("name")).strip()
             changed = True
             break
     if not changed:

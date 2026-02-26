@@ -300,6 +300,12 @@ DASHBOARD_HTML = r"""
                     <div class="inline-config-header">
                       <div class="section-title" id="strategyPanelTitle">Strategy</div>
                     </div>
+                    <div class="config-row" style="flex:0;">
+                      <div style="flex:1;">
+                        <label>Emoji</label>
+                        <input id="strategyEmoji" placeholder="🧠" style="max-width:120px;" />
+                      </div>
+                    </div>
                     <div class="config-row">
                       <div style="flex:1;">
                         <label>Markdown</label>
@@ -530,11 +536,11 @@ DASHBOARD_HTML = r"""
             const list = showArchived ? all : all.filter(s => !s.archived);
 
             const sel = document.getElementById('strategySelect');
-            if (sel) sel.innerHTML = all.map(s => '<option value="' + s.id + '">' + s.name + '</option>').join('');
+            if (sel) sel.innerHTML = all.map(s => '<option value="' + s.id + '">' + (s.emoji || '🧠') + ' ' + s.name + '</option>').join('');
 
             const container = document.getElementById('strategiesList');
             if (container) {
-              container.innerHTML = list.map(s => '<div class="bot-row strategy-row" draggable="true" data-strategy-id="' + s.id + '" onclick="openStrategy(\'' + s.id.replace(/'/g, "\\'") + '\')"><div class="bot-col bot-name">🧠 ' + s.name + (s.archived ? ' <span style="opacity:.6">(archived)</span>' : '') + '</div></div>').join('');
+              container.innerHTML = list.map(s => '<div class="bot-row strategy-row" draggable="true" data-strategy-id="' + s.id + '" onclick="openStrategy(\'' + s.id.replace(/'/g, "\\'") + '\')"><div class="bot-col bot-name">' + (s.emoji || '🧠') + ' ' + s.name + (s.archived ? ' <span style="opacity:.6">(archived)</span>' : '') + '</div></div>').join('');
             }
 
             wireStrategyDragAndDrop();
@@ -586,6 +592,7 @@ DASHBOARD_HTML = r"""
             const data = await res.json();
             document.getElementById('strategyPanelTitle').innerText = 'Strategy: ' + (data.name || id);
             document.getElementById('strategyMarkdown').value = data.markdown || '';
+            document.getElementById('strategyEmoji').value = (currentStrategyMeta && currentStrategyMeta.emoji) ? currentStrategyMeta.emoji : '🧠';
             const btn = document.getElementById('archiveStrategyBtn');
             if (btn) btn.innerText = (currentStrategyMeta && currentStrategyMeta.archived) ? 'Unarchive' : 'Archive';
           }
@@ -593,9 +600,15 @@ DASHBOARD_HTML = r"""
           async function saveStrategyMarkdown() {
             if (!currentStrategy) return;
             const markdown = document.getElementById('strategyMarkdown').value;
+            const emoji = (document.getElementById('strategyEmoji').value || '🧠').trim();
+            await fetch('/api/strategy/' + encodeURIComponent(currentStrategy) + '/meta', {
+              method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ emoji })
+            });
             await fetch('/api/strategy/' + encodeURIComponent(currentStrategy) + '/md', {
               method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ markdown })
             });
+            await loadStrategies();
+            openStrategy(currentStrategy);
           }
 
           async function toggleArchiveStrategy() {
@@ -639,8 +652,9 @@ DASHBOARD_HTML = r"""
           async function confirmCreateStrategy() {
             const name = document.getElementById('createStrategyName').value.trim();
             if (!name) return;
+            const emoji = '🧠';
             const res = await fetch('/api/strategy/create', {
-              method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ name })
+              method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ name, emoji })
             });
             const data = await res.json();
             hideCreateStrategyModal();
