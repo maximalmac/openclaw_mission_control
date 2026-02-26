@@ -57,6 +57,24 @@ MODALS = r"""<div class="modal-overlay" id="createModal">
           </div>
         </div>
 
+        <div class="modal-overlay" id="confidenceInfoModal">
+          <div class="modal">
+            <div class="modal-title">Strategy Confidence Model</div>
+            <div class="modal-text" style="text-align:left; line-height:1.6;">
+              Confidence is scored out of 100 and normalized to 0.00–1.00.<br/><br/>
+              • Rule clarity (0–25): are entries/exits/risk explicit?<br/>
+              • Data availability (0–15): can we test it with our datasets?<br/>
+              • Execution feasibility (0–20): fees, slippage, liquidity realism<br/>
+              • Backtest quality (0–20): OOS / walk-forward evidence<br/>
+              • Source credibility (0–10): paper/code > hype<br/>
+              • Regime robustness (0–10): multiple market regimes
+            </div>
+            <div class="modal-actions">
+              <button class="btn-primary" onclick="hideConfidenceInfoModal()">Got it</button>
+            </div>
+          </div>
+        </div>
+
         <div class="modal-overlay" id="deleteStrategyModal">
           <div class="modal">
             <div class="modal-title">Delete Strategy</div>

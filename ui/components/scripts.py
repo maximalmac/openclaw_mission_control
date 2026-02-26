@@ -75,6 +75,14 @@ SCRIPTS = r"""<script>
             await loadResearchFeed();
           }
 
+          function showConfidenceInfoModal() {
+            document.getElementById('confidenceInfoModal').classList.add('visible');
+          }
+
+          function hideConfidenceInfoModal() {
+            document.getElementById('confidenceInfoModal').classList.remove('visible');
+          }
+
           async function loadBots() {
             const res = await fetch('/api/bots');
             const data = await res.json();

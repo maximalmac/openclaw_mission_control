@@ -114,7 +114,10 @@ MAIN_CONTENT = r"""<main>
             <section id="strategy-research" class="section" style="margin-top:24px;">
               <div class="section-header" style="margin-bottom:16px; display:flex; justify-content:space-between; align-items:center;">
                 <div class="section-title">Strategy Research Feed</div>
-                <button class="btn-primary" onclick="refreshResearchFeed()">Refresh</button>
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <button class="btn-secondary" onclick="showConfidenceInfoModal()">Confidence Model</button>
+                  <button class="btn-primary" onclick="refreshResearchFeed()">Refresh</button>
+                </div>
               </div>
               <div class="config-panel" style="min-height:70vh;">
                 <div id="strategyResearchCards" class="bot-list" style="gap:12px;"></div>
