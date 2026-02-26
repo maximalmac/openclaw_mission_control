@@ -111,6 +111,21 @@ MAIN_CONTENT = r"""<main>
               </div>
             </section>
 
+            <section id="strategy-research" class="section" style="margin-top:24px;">
+              <div class="section-header" style="margin-bottom:16px; display:flex; justify-content:space-between; align-items:center;">
+                <div class="section-title">Strategy Research Feed</div>
+                <button class="btn-primary" onclick="saveResearchFeed()">Save Feed</button>
+              </div>
+              <div class="config-panel">
+                <div class="config-row" style="margin-bottom:0;">
+                  <div style="flex:1; min-height:0; display:flex; flex-direction:column;">
+                    <label>Most Popular + Latest Strategy Leads (JSON)</label>
+                    <textarea id="strategyResearchText" style="min-height:60vh;" placeholder='{"items":[{"title":"Funding rate mean reversion","source":"YouTube","url":"https://...","confidence":0.62,"status":"new"}]}'></textarea>
+                  </div>
+                </div>
+              </div>
+            </section>
+
             <section id="back-testing" class="section" style="margin-top:24px;">
               <div class="section-header" style="margin-bottom:16px;">
                 <div class="section-title">Back-Testing Reports</div>

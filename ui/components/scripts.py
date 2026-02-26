@@ -8,6 +8,23 @@ SCRIPTS = r"""<script>
             localStorage.setItem('mc-theme', next);
           }
 
+          async function loadResearchFeed() {
+            const res = await fetch('/api/strategy-research');
+            const data = await res.json();
+            const el = document.getElementById('strategyResearchText');
+            if (el) el.value = JSON.stringify(data, null, 2);
+          }
+
+          async function saveResearchFeed() {
+            const el = document.getElementById('strategyResearchText');
+            if (!el) return;
+            let payload;
+            try { payload = JSON.parse(el.value || '{"items":[]}'); } catch (e) { alert('Invalid JSON'); return; }
+            await fetch('/api/strategy-research', {
+              method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload)
+            });
+          }
+
           async function loadBots() {
             const res = await fetch('/api/bots');
             const data = await res.json();
@@ -412,6 +429,7 @@ SCRIPTS = r"""<script>
           document.getElementById('home').style.display = activePage === 'home' ? 'block' : 'none';
           document.getElementById('trading-bots').style.display = activePage === 'trading-bots' ? 'block' : 'none';
           document.getElementById('utility-bots').style.display = activePage === 'utility-bots' ? 'block' : 'none';
+          document.getElementById('strategy-research').style.display = activePage === 'strategy-research' ? 'block' : 'none';
           document.getElementById('back-testing').style.display = (activePage === 'back-testing' || activePage === 'back-testing-reports') ? 'block' : 'none';
           document.getElementById('readiness').style.display = activePage === 'readiness' ? 'block' : 'none';
           document.getElementById('usage').style.display = activePage === 'usage' ? 'block' : 'none';
@@ -422,6 +440,9 @@ SCRIPTS = r"""<script>
             loadBots();
             loadStrategies();
             setTimeout(wireDragAndDrop, 50);
+          }
+          if (activePage === 'strategy-research') {
+            loadResearchFeed();
           }
           if (activePage === 'usage') {
             loadUsage();

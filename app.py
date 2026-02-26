@@ -20,6 +20,7 @@ STATE_FILE = MC_DIR / "state.json"
 USAGE_FILE = MC_DIR / "usage.json"
 STRATEGIES_FILE = MC_DIR / "strategies.json"
 BOT_ORDER_FILE = MC_DIR / "bot_order.json"
+STRATEGY_RESEARCH_FILE = MC_DIR / "strategy_research.json"
 TEMPLATE_DIR = AGENTS_ROOT / "bot-template"
 
 for d in [AGENTS_ROOT, TRADING_BOTS_DIR, UTILITY_BOTS_DIR, STRATEGY_MD_DIR, STRATEGY_VERSIONS_DIR]:
@@ -169,6 +170,22 @@ def save_bot_order(order: list):
     BOT_ORDER_FILE.write_text(json.dumps(order, indent=2))
 
 
+def load_strategy_research():
+    if STRATEGY_RESEARCH_FILE.exists():
+        try:
+            data = json.loads(STRATEGY_RESEARCH_FILE.read_text())
+            if isinstance(data, dict):
+                data.setdefault("items", [])
+                return data
+        except Exception:
+            pass
+    return {"items": []}
+
+
+def save_strategy_research(data: dict):
+    STRATEGY_RESEARCH_FILE.write_text(json.dumps(data, indent=2))
+
+
 def apply_bot_order(bots: list) -> list:
     order = load_bot_order()
     ordered = [b for b in order if b in bots]
@@ -249,6 +266,11 @@ def back_testing_page():
     return render_dashboard("back-testing")
 
 
+@app.get("/strategy-research", response_class=HTMLResponse)
+def strategy_research_page():
+    return render_dashboard("strategy-research")
+
+
 @app.get("/back-testing-reports", response_class=HTMLResponse)
 def back_testing_reports_page():
     return render_dashboard("back-testing-reports")
@@ -278,6 +300,19 @@ def strategies_page():
 def api_changelog():
     p = MC_DIR / "CHANGELOG.md"
     return p.read_text() if p.exists() else "# Changelog\n\nNo changelog yet."
+
+
+@app.get("/api/strategy-research")
+def api_strategy_research():
+    return load_strategy_research()
+
+
+@app.post("/api/strategy-research")
+def api_strategy_research_save(payload: dict):
+    data = payload if isinstance(payload, dict) else {"items": []}
+    data.setdefault("items", [])
+    save_strategy_research(data)
+    return {"ok": True}
 
 
 @app.get("/api/bots")

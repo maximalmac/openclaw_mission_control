@@ -35,5 +35,6 @@
 - Refactored UI template into smaller component files (styles, sidebar, main content, modals, scripts) to keep template code maintainable.
 - Sidebar navigation updated: restored **Tools** with **Back-Testing** and added separate **Report** section with **Back-Testing Reports**.
 - Added **Readiness Checklist** report page with production-readiness milestones for automated trading rollout.
+- Added **Strategy Research** page under Tools with JSON feed storage for popular/latest strategy leads.
 - Added **Changelog** page in the Mission Control UI (Configuration section), backed by `CHANGELOG.md`.
 - Added a richer **Mission Control Overview** block on the Home dashboard summarizing current capabilities and key missing pieces for full automation.
