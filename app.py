@@ -203,14 +203,15 @@ def render_dashboard(active_page="trading-bots"):
         badge_class = "badge-live" if status['status'] == "running" else "badge-idle"
         avatar_html = f"<img src='{profile['avatar']}' class='bot-avatar' />" if profile.get('avatar') else f"<span class='bot-emoji'>{profile.get('emoji') or '🤖'}</span>"
         mode_badge = "🟢 Live" if profile.get('trading_mode') == 'live' else "📝 Paper"
+        toggle_label = "Stop" if status['status'] == "running" else "Start"
+        toggle_class = "btn-danger" if status['status'] == "running" else "btn-success"
         row_html = f"""
         <div class="bot-row" draggable="true" data-bot="{b}" onclick="openConfig('{b}')">
           <div class="bot-col bot-name">{avatar_html} {profile.get('display_name', b)}</div>
           <div class="bot-col"><span class="card-badge {badge_class}">{status['status']}</span></div>
           <div class="bot-col">{mode_badge} · PID: {status['pid'] or '-'}</div>
           <div class="bot-col actions" onclick="event.stopPropagation()">
-            <button class="btn-primary" onclick="fetch('/api/bot/{b}/start',{{method:'POST'}}).then(()=>location.reload())">Start</button>
-            <button class="btn-secondary" onclick="fetch('/api/bot/{b}/stop',{{method:'POST'}}).then(()=>location.reload())">Stop</button>
+            <button class="{toggle_class}" onclick="toggleBot('{b}','{status['status']}')">{toggle_label}</button>
           </div>
         </div>
         """
@@ -525,6 +526,43 @@ def api_bot_create(payload: dict):
     cfg.setdefault("trading_mode", "paper")
     cfg_path.write_text(json.dumps(cfg, indent=2))
     return {"ok": True, "name": name, "display_name": raw_name}
+
+
+@app.post("/api/bot/{name}/rename")
+def api_bot_rename(name: str, payload: dict):
+    d = bot_dir(name)
+    if not d:
+        raise HTTPException(404, "Bot not found")
+    new_raw = str(payload.get("new_name", "")).strip()
+    if not new_raw:
+        raise HTTPException(400, "new_name required")
+    new_slug = strategy_slug(new_raw)
+    if not new_slug:
+        raise HTTPException(400, "invalid new_name")
+    if new_slug != name and bot_dir(new_slug):
+        raise HTTPException(400, "Bot name already exists")
+
+    parent = d.parent
+    new_dir = parent / new_slug
+    if new_slug != name:
+        d.rename(new_dir)
+    else:
+        new_dir = d
+
+    cfg_path = new_dir / "config.json"
+    cfg = json.loads(cfg_path.read_text()) if cfg_path.exists() else {}
+    cfg["display_name"] = new_raw
+    cfg_path.write_text(json.dumps(cfg, indent=2))
+
+    state = load_state()
+    if "bots" in state and name in state["bots"] and new_slug != name:
+        state["bots"][new_slug] = state["bots"].pop(name)
+        save_state(state)
+
+    order = load_bot_order()
+    order = [new_slug if x == name else x for x in order]
+    save_bot_order(order)
+    return {"ok": True, "name": new_slug, "display_name": new_raw}
 
 
 @app.post("/api/bot/{name}/delete")

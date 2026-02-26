@@ -35,13 +35,15 @@ DASHBOARD_HTML = r"""
           * { box-sizing: border-box; margin: 0; padding: 0; }
           body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; overflow: hidden; }
 
-          .btn-primary, .btn-secondary, .btn-danger { padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; border: 1px solid var(--border); transition: all 0.15s ease; }
+          .btn-primary, .btn-secondary, .btn-danger, .btn-success { padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; border: 1px solid var(--border); transition: all 0.15s ease; }
           .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
           .btn-primary:hover { background: #4c9aed; border-color: #4c9aed; }
           .btn-secondary { background: var(--card-bg); color: var(--text); }
           .btn-secondary:hover { background: var(--card-hover); border-color: var(--accent); }
           .btn-danger { background: var(--red); color: #fff; border: 1px solid var(--red); }
           .btn-danger:hover { background: #df4a42; border-color: #df4a42; }
+          .btn-success { background: var(--green); color: #fff; border: 1px solid var(--green); }
+          .btn-success:hover { background: #35a545; border-color: #35a545; }
 
           .sidebar { width: var(--sidebar-width); background: var(--card-bg); border-right: 1px solid var(--border); height: 100vh; position: fixed; top: 0; left: 0; display: flex; flex-direction: column; z-index: 60; }
           .sidebar-header { padding: 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
@@ -184,8 +186,8 @@ DASHBOARD_HTML = r"""
                     </div>
                     <div class="config-row">
                       <div style="flex:1;">
-                        <label>Bot</label>
-                        <select id="botSelect"></select>
+                        <label>Bot Name</label>
+                        <input id="botNameInput" placeholder="e.g. Kerr Avon" />
                       </div>
                       <div style="flex:1;">
                         <label>Strategy</label>
@@ -426,8 +428,6 @@ DASHBOARD_HTML = r"""
           async function loadBots() {
             const res = await fetch('/api/bots');
             const data = await res.json();
-            const sel = document.getElementById('botSelect');
-            sel.innerHTML = data.bots.map(b => '<option value="' + b + '">' + b + '</option>').join('');
             if (data.bots.length) {
               const remembered = localStorage.getItem('mc-selected-bot');
               const pick = (remembered && data.bots.includes(remembered)) ? remembered : data.bots[0];
@@ -437,7 +437,7 @@ DASHBOARD_HTML = r"""
 
           let currentTradingMode = 'paper';
 
-          function setTradingMode(mode) {
+          async function setTradingMode(mode, persist=true) {
             currentTradingMode = mode === 'live' ? 'live' : 'paper';
             const paperBtn = document.getElementById('modePaperBtn');
             const liveBtn = document.getElementById('modeLiveBtn');
@@ -445,16 +445,24 @@ DASHBOARD_HTML = r"""
               paperBtn.className = currentTradingMode === 'paper' ? 'btn-primary' : 'btn-secondary';
               liveBtn.className = currentTradingMode === 'live' ? 'btn-primary' : 'btn-secondary';
             }
+            if (persist && currentConfigBot) {
+              const res = await fetch('/api/bot/' + currentConfigBot + '/config');
+              const cfg = await res.json();
+              cfg.trading_mode = currentTradingMode;
+              await fetch('/api/bot/' + currentConfigBot + '/config', {
+                method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(cfg)
+              });
+            }
           }
 
           async function loadConfig(bot) {
             const res = await fetch('/api/bot/' + bot + '/config');
             const data = await res.json();
             document.getElementById('configText').value = JSON.stringify(data, null, 2);
-            document.getElementById('botSelect').value = bot;
+            document.getElementById('botNameInput').value = data.display_name || bot;
             document.getElementById('emojiInput').value = data.emoji || '';
             document.getElementById('avatarInput').value = data.avatar || '';
-            setTradingMode(data.trading_mode || 'paper');
+            setTradingMode(data.trading_mode || 'paper', false);
           }
 
           async function loadFiles(bot) {
@@ -464,7 +472,8 @@ DASHBOARD_HTML = r"""
           }
 
           async function saveConfigData() {
-            const bot = document.getElementById('botSelect').value;
+            const bot = currentConfigBot;
+            if (!bot) return false;
             const text = document.getElementById('configText').value;
             let payload;
             try { payload = JSON.parse(text); } catch (e) { alert('Invalid JSON'); return false; }
@@ -473,12 +482,14 @@ DASHBOARD_HTML = r"""
             payload.trading_mode = currentTradingMode || 'paper';
             payload.emoji = document.getElementById('emojiInput').value || '🤖';
             payload.avatar = document.getElementById('avatarInput').value || '';
+            payload.display_name = document.getElementById('botNameInput').value.trim() || bot;
             await fetch('/api/bot/' + bot + '/config', { method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
             return true;
           }
 
           async function saveFilesData() {
-            const bot = document.getElementById('botSelect').value;
+            const bot = currentConfigBot;
+            if (!bot) return false;
             const payload = {
               SOUL: document.getElementById('soulText').value
             };
@@ -494,11 +505,32 @@ DASHBOARD_HTML = r"""
             document.getElementById('saveModal').classList.remove('visible');
           }
 
+          async function maybeRenameBot() {
+            const bot = currentConfigBot;
+            const newName = (document.getElementById('botNameInput').value || '').trim();
+            if (!bot || !newName) return bot;
+            const res = await fetch('/api/bot/' + bot + '/rename', {
+              method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ new_name: newName })
+            });
+            if (!res.ok) {
+              const err = await res.json().catch(()=>({}));
+              alert(err.detail || 'Failed to rename bot');
+              return null;
+            }
+            const data = await res.json();
+            currentConfigBot = data.name;
+            localStorage.setItem('mc-selected-bot', data.name);
+            return data.name;
+          }
+
           async function confirmSaveAll() {
+            const renamed = await maybeRenameBot();
+            if (renamed === null) return;
             const ok = await saveConfigData();
             if (!ok) return;
             await saveFilesData();
             hideSaveModal();
+            location.reload();
           }
 
           let pendingCreateKind = 'trading';
@@ -525,7 +557,7 @@ DASHBOARD_HTML = r"""
           let pendingDeleteBot = null;
 
           async function deleteBot() {
-            const bot = document.getElementById('botSelect').value;
+            const bot = currentConfigBot;
             if (!bot) return;
             pendingDeleteBot = bot;
             document.getElementById('deleteModalText').innerText = 'Are you sure you want to delete "' + bot + '"? This cannot be undone.';
@@ -702,6 +734,12 @@ DASHBOARD_HTML = r"""
             loadStrategies();
           }
 
+          async function toggleBot(bot, status) {
+            const action = status === 'running' ? 'stop' : 'start';
+            await fetch('/api/bot/' + bot + '/' + action, { method:'POST' });
+            location.reload();
+          }
+
           function closePanel() {
             document.getElementById('configPanel').classList.remove('visible');
           }
@@ -764,13 +802,6 @@ DASHBOARD_HTML = r"""
             if (e.key === 'Enter') confirmCreateStrategy();
           });
 
-          document.getElementById('botSelect')?.addEventListener('change', (e) => {
-            const bot = e.target.value;
-            currentConfigBot = bot;
-            localStorage.setItem('mc-selected-bot', bot);
-            loadConfig(bot);
-            loadFiles(bot);
-          });
         </script>
       </body>
     </html>"""
