@@ -15,4 +15,7 @@
 - Bot creation now standardizes folder names to lowercase_slug (e.g., "Kerr Avon" -> `kerr_avon`) while keeping display name in config.
 - Bot config now uses a bot name text field (instead of dropdown); saving can rename bot folder to slugified name.
 - Bot list action changed to a single status-aware toggle button (green Start when off, red Stop when on).
-- Trading mode toggle now persists immediately in bot config on save flow.
+- Trading mode toggle now persists immediately in bot config on click.
+- Bot list columns adjusted for more even spacing; status/mode/pid/action are aligned and action button size is consistent.
+- Bot config field order updated: Name, Emoji/Avatar, Trading Mode, Strategy, then Config.
+- Switching between bots now warns if there are unsaved changes.

@@ -66,12 +66,14 @@ DASHBOARD_HTML = r"""
 
           main { padding: 24px; flex: 1; }
           .bot-list { display: flex; flex-direction: column; gap: 10px; }
-          .bot-row { display: grid; grid-template-columns: 1.2fr 0.6fr 0.8fr 1fr; gap: 10px; align-items: center; background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
+          .bot-row { display: grid; grid-template-columns: minmax(220px,1.6fr) minmax(140px,1fr) minmax(160px,1fr) minmax(140px,1fr); gap: 12px; align-items: center; background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
           .bot-row:hover { background: var(--card-hover); border-color: var(--accent); }
           .bot-row.dragging { opacity: 0.5; }
           .bot-row.drop-target { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
-          .bot-col { font-size: 0.85rem; color: var(--text-muted); }
-          .bot-name { color: var(--text); font-weight: 600; display:flex; align-items:center; gap:8px; }
+          .bot-col { font-size: 0.85rem; color: var(--text-muted); text-align: center; }
+          .bot-name { color: var(--text); font-weight: 600; display:flex; align-items:center; gap:8px; text-align:left; }
+          .actions { justify-content: center; }
+          .actions button { min-width: 90px; }
           .bot-avatar { width:20px; height:20px; border-radius:50%; object-fit:cover; }
           .bot-emoji { font-size: 1rem; line-height: 1; }
           .card-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
@@ -186,12 +188,18 @@ DASHBOARD_HTML = r"""
                     </div>
                     <div class="config-row">
                       <div style="flex:1;">
-                        <label>Bot Name</label>
+                        <label>Name</label>
                         <input id="botNameInput" placeholder="e.g. Kerr Avon" />
                       </div>
+                    </div>
+                    <div class="config-row">
                       <div style="flex:1;">
-                        <label>Strategy</label>
-                        <select id="strategySelect"></select>
+                        <label>Emoji</label>
+                        <input id="emojiInput" list="botEmojiList" placeholder="🤖" />
+                      </div>
+                      <div style="flex:2;">
+                        <label>Avatar URL (optional)</label>
+                        <input id="avatarInput" placeholder="https://..." />
                       </div>
                     </div>
                     <div class="config-row" style="flex:0;">
@@ -203,14 +211,10 @@ DASHBOARD_HTML = r"""
                         </div>
                       </div>
                     </div>
-                    <div class="config-row">
+                    <div class="config-row" style="flex:0;">
                       <div style="flex:1;">
-                        <label>Emoji</label>
-                        <input id="emojiInput" list="botEmojiList" placeholder="🤖" />
-                      </div>
-                      <div style="flex:2;">
-                        <label>Avatar URL (optional)</label>
-                        <input id="avatarInput" placeholder="https://..." />
+                        <label>Strategy</label>
+                        <select id="strategySelect"></select>
                       </div>
                     </div>
                     <div class="config-row">
@@ -530,6 +534,7 @@ DASHBOARD_HTML = r"""
             if (!ok) return;
             await saveFilesData();
             hideSaveModal();
+            botFormBaseline = getBotFormSnapshot();
             location.reload();
           }
 
@@ -724,14 +729,37 @@ DASHBOARD_HTML = r"""
           }
 
           let currentConfigBot = null;
+          let botFormBaseline = null;
 
-          function openConfig(bot) {
+          function getBotFormSnapshot() {
+            return {
+              name: document.getElementById('botNameInput')?.value || '',
+              emoji: document.getElementById('emojiInput')?.value || '',
+              avatar: document.getElementById('avatarInput')?.value || '',
+              mode: currentTradingMode || 'paper',
+              strategy: document.getElementById('strategySelect')?.value || '',
+              config: document.getElementById('configText')?.value || '',
+              soul: document.getElementById('soulText')?.value || ''
+            };
+          }
+
+          function hasUnsavedBotChanges() {
+            if (!botFormBaseline) return false;
+            return JSON.stringify(botFormBaseline) !== JSON.stringify(getBotFormSnapshot());
+          }
+
+          async function openConfig(bot) {
+            if (currentConfigBot && bot !== currentConfigBot && hasUnsavedBotChanges()) {
+              const proceed = confirm('You have unsaved changes for this bot. Switch anyway and discard them?');
+              if (!proceed) return;
+            }
             currentConfigBot = bot;
             localStorage.setItem('mc-selected-bot', bot);
             document.getElementById('configPanel').classList.add('visible');
-            loadConfig(bot);
-            loadFiles(bot);
-            loadStrategies();
+            await loadConfig(bot);
+            await loadFiles(bot);
+            await loadStrategies();
+            botFormBaseline = getBotFormSnapshot();
           }
 
           async function toggleBot(bot, status) {
