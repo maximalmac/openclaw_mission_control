@@ -1,67 +1,54 @@
 {
   "items": [
     {
-      "title": "Basis Divergence Convergence",
-      "source": "SSRN",
-      "url": "https://example.com/strategy/basis-divergence",
-      "confidence": 0.6,
-      "synopsis": "Exploit short-term basis dislocations between perp and index with strict time-stop.",
+      "title": "Ethereum Funding Rates Flash Critical Warning Signal as Leverage Overheats - CryptoRank",
+      "source": "news.google.com",
+      "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxQQjYyczA4UDhGYkFTVGVqN0JpY0NfXzkycmVlZHlDX0ZFWlhkR2xHS21zTTMtOWdiUGtPVGgzSUtqbTZKWFBHc0c3eU5LQm1HRDJXeU4xRXJTeFdxdWo0d1N0NUtqbldnQ3VnLTRUMVl4QlNpelNNck9zLUV1eW5NNktkVUlBUGhmLXItR3JPX05oRUVaSFE?oc=5",
+      "confidence": 0.42,
+      "synopsis": "Live-collected lead from news/RSS source; requires deep validation before promotion.",
       "status": "new",
-      "created_at": "2026-02-26 19:09:12",
-      "notes": "Added by Dax strategy scan"
+      "created_at": "2026-02-26 19:34:20",
+      "notes": "Added by Dax live scan"
     },
     {
-      "title": "Liquidation Sweep Reversal",
-      "source": "X/Community",
-      "url": "https://example.com/strategy/liquidation-sweep",
-      "confidence": 0.52,
-      "synopsis": "Look for liquidation wicks followed by reclaim and momentum reversal confirmation.",
+      "title": "20 Best Crypto Trading Signal Providers for 2026 - NFT Plazas",
+      "source": "news.google.com",
+      "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTFBaV19BdmdXMFJ4a2lobWhDT2MtOFduM1dmRllFcTFtVGNlX2IzSzI4ZFVPbFJfOUlWeVE5TEZYRV9HNzRmSnB4bW5YTmFrWEd6UWlFdA?oc=5",
+      "confidence": 0.42,
+      "synopsis": "Live-collected lead from news/RSS source; requires deep validation before promotion.",
       "status": "new",
-      "created_at": "2026-02-26 19:09:12",
-      "notes": "Added by Dax strategy scan"
+      "created_at": "2026-02-26 19:34:20",
+      "notes": "Added by Dax live scan"
     },
     {
-      "title": "Regime-Switch EMA Pullback",
-      "source": "YouTube",
-      "url": "https://example.com/strategy/regime-ema-pullback",
-      "confidence": 0.57,
-      "synopsis": "Use trend regime classification then execute pullback entries aligned with higher timeframe direction.",
+      "title": "A Beginner\u2019s Guide to Trading Crypto Futures in California - edhat",
+      "source": "news.google.com",
+      "url": "https://news.google.com/rss/articles/CBMimgFBVV95cUxQMm9DN2ZIX1BSc1VBMVFxaDhxUVI1YUluWW96MnhDQzkxWFRfRmU1ZEVkc00yM2Z0MmEzdHpyQ29vbFF0bmRONlFEZjVZcFFwb05xc19ITjhYbXRzbkRmOGRaR2pmX2xjVHVjYWc0WHg2NmJOMHdvbEpBbFBnb1RxcXYyU1Vfb25SNElPSTM3cU9vM09VMGIzZld3?oc=5",
+      "confidence": 0.42,
+      "synopsis": "Live-collected lead from news/RSS source; requires deep validation before promotion.",
       "status": "new",
-      "created_at": "2026-02-26 19:09:12",
-      "notes": "Added by Dax strategy scan"
+      "created_at": "2026-02-26 19:34:20",
+      "notes": "Added by Dax live scan"
     },
     {
-      "title": "Volatility Compression Expansion",
-      "source": "TradingView",
-      "url": "https://example.com/strategy/vol-compression",
-      "confidence": 0.55,
-      "synopsis": "Detect low-volatility squeeze and enter on expansion with ATR-based exits.",
+      "title": "5 Simple Strategies to Start Crypto Futures Trading Safely - KuCoin",
+      "source": "news.google.com",
+      "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxQOElpMlVnLWgzM1hzUFlmd2s0bUd3WDdzeks5VXFod1Z4ZmpyVDRBeU5EMmNLemRwRUt6b0JQMmloTzVwMk5jMUw0TTVDQ0lmMmUxVms5MlhIWVRDdWxSR1BRbTI2bnVjTDMzUVlzOEhnaEVDYzZ5WFVVU3JoVzItOVhJTWJmVUVCY0d4NVlfT21JZlVHNmVmZg?oc=5",
+      "confidence": 0.42,
+      "synopsis": "Live-collected lead from news/RSS source; requires deep validation before promotion.",
       "status": "new",
-      "created_at": "2026-02-26 19:09:12",
-      "notes": "Added by Dax strategy scan"
+      "created_at": "2026-02-26 19:34:20",
+      "notes": "Added by Dax live scan"
     },
     {
-      "title": "Breakout Retest Momentum",
-      "source": "GitHub",
-      "url": "https://example.com/strategy/breakout-retest",
-      "confidence": 0.58,
-      "synopsis": "Trade confirmed structure breaks after controlled retest with volume confirmation.",
+      "title": "Crypto Futures Liquidations Trigger Massive $470M Short Squeeze as Bitcoin and Ethereum Lead Market Turmoil - CryptoRank",
+      "source": "news.google.com",
+      "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxNSXNwSFBDaEd6azFPTDhvN3g1TW9tZEVjb1JPa2VrZEwtam1KVjltdUJ1blFwSkYxN3Q1NktYSFUwazN0c25KNlR2N3BLS1ItdmxETzJ3bGtQS1ZQTW5OclBOQ0tGMXlWV0FKWUxJMFZRU01oV1ZFYzBGYnVQY0k1WTc0THREdXVB?oc=5",
+      "confidence": 0.42,
+      "synopsis": "Live-collected lead from news/RSS source; requires deep validation before promotion.",
       "status": "new",
-      "created_at": "2026-02-26 19:09:12",
-      "notes": "Added by Dax strategy scan"
-    },
-    {
-      "title": "Funding Rate Mean Reversion (Perps)",
-      "source": "DAX test run",
-      "url": "https://example.com/strategy/funding-mean-reversion",
-      "confidence": 0.61,
-      "status": "investigate",
-      "created_at": "2026-02-26 18:28:53",
-      "notes": "Test payload inserted by DAX utility bot to validate feed wiring.",
-      "investigation_started_at": 1772096204,
-      "deep_research_report": "/Users/markfiebiger/.openclaw/mission_control/strategy_research_reports/funding_rate_mean_reversion_perps_1772096204.md",
-      "strategy_file": "/Users/markfiebiger/.openclaw/mission_control/strategies/funding_rate_mean_reversion_perps.md",
-      "updated_at": 1772096204
+      "created_at": "2026-02-26 19:34:20",
+      "notes": "Added by Dax live scan"
     }
   ]
 }

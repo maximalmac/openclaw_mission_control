@@ -537,8 +537,8 @@ SCRIPTS = r"""<script>
           const activePage = '{{ACTIVE_PAGE}}';
           document.getElementById('nav-' + activePage)?.classList.add('active');
           document.getElementById('home').style.display = activePage === 'home' ? 'block' : 'none';
-          document.getElementById('trading-bots').style.display = activePage === 'trading-bots' ? 'block' : 'none';
-          document.getElementById('utility-bots').style.display = activePage === 'utility-bots' ? 'block' : 'none';
+          document.getElementById('trading-bots').style.display = (activePage === 'trading-bots' || activePage === 'utility-bots') ? 'block' : 'none';
+          document.getElementById('utility-bots').style.display = 'none';
           document.getElementById('strategy-research').style.display = activePage === 'strategy-research' ? 'block' : 'none';
           document.getElementById('strategy-research-reports').style.display = activePage === 'strategy-research-reports' ? 'block' : 'none';
           document.getElementById('back-testing').style.display = (activePage === 'back-testing' || activePage === 'back-testing-reports') ? 'block' : 'none';
@@ -546,6 +546,9 @@ SCRIPTS = r"""<script>
           document.getElementById('usage').style.display = activePage === 'usage' ? 'block' : 'none';
           document.getElementById('changelog').style.display = activePage === 'changelog' ? 'block' : 'none';
           document.getElementById('strategies').style.display = activePage === 'strategies' ? 'block' : 'none';
+
+          const botsTitle = document.getElementById('botsPageTitle');
+          if (botsTitle) botsTitle.innerText = activePage === 'utility-bots' ? 'Utility Bots' : 'Trading Bots';
 
           if (activePage === 'trading-bots' || activePage === 'utility-bots') {
             loadBots();

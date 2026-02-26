@@ -42,7 +42,7 @@ STYLES = r"""<style>
           .btn-success:hover { background: #35a545; border-color: #35a545; }
 
           .sidebar { width: var(--sidebar-width); background: var(--card-bg); border-right: 1px solid var(--border); height: 100vh; position: fixed; top: 0; left: 0; display: flex; flex-direction: column; z-index: 60; }
-          .sidebar-header { padding: 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+          .sidebar-header { height: 66px; padding: 0 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
           .sidebar-title { font-size: 0.9rem; font-weight: 600; white-space: nowrap; }
           .sidebar-toggle { margin-left: auto; background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 6px; border-radius: 6px; font-size: 1rem; }
           .sidebar-toggle:hover { background: var(--bg); color: var(--text); }
@@ -54,7 +54,7 @@ STYLES = r"""<style>
           .nav-icon { font-size: 1rem; width: 20px; text-align: center; }
 
           .main-wrapper { flex: 1; margin-left: var(--sidebar-width); display: flex; flex-direction: column; height: 100vh; overflow-y: auto; scroll-behavior: smooth; }
-          header { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; border-bottom: 1px solid var(--border); background: var(--card-bg); position: sticky; top: 0; z-index: 50; }
+          header { height: 66px; display: flex; justify-content: space-between; align-items: center; padding: 0 24px; border-bottom: 1px solid var(--border); background: var(--card-bg); position: sticky; top: 0; z-index: 50; }
           .page-title { font-size: 1.1rem; font-weight: 600; }
           .status-pill { display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(63, 185, 80, 0.15); border-radius: 20px; font-size: 0.8rem; color: var(--green); }
           .pulse { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }

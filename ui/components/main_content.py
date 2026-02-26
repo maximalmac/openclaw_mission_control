@@ -34,8 +34,8 @@ MAIN_CONTENT = r"""<main>
 
             <section id="trading-bots" class="section">
               <div class="section-header" style="margin-bottom:16px; display:flex; justify-content:space-between; align-items:center;">
-                <div class="section-title">Trading Bots</div>
-                <button class="btn-primary" onclick="createBot()">Create Bot</button>
+                <div class="section-title" id="botsPageTitle">Trading Bots</div>
+                <button class="btn-primary" id="createBotBtn" onclick="createBot()">Create Bot</button>
               </div>
               <div class="bots-layout">
                 <div class="bot-list-wrap">

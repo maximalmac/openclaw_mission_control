@@ -221,14 +221,15 @@ def render_dashboard(active_page="trading-bots"):
         profile = bot_profile(b)
         badge_class = "badge-live" if status['status'] == "running" else "badge-idle"
         avatar_html = f"<img src='{profile['avatar']}' class='bot-avatar' />" if profile.get('avatar') else f"<span class='bot-emoji'>{profile.get('emoji') or '🤖'}</span>"
-        mode_badge = "🟢 Live" if profile.get('trading_mode') == 'live' else "📝 Paper"
+        is_utility = bot_kind(b) == "utility"
+        mode_badge = "" if is_utility else ("🟢 Live" if profile.get('trading_mode') == 'live' else "📝 Paper")
         toggle_label = "Stop" if status['status'] == "running" else "Start"
         toggle_class = "btn-danger" if status['status'] == "running" else "btn-success"
         row_html = f"""
         <div class="bot-row" draggable="true" data-bot="{b}" onclick="openConfig('{b}')">
           <div class="bot-col bot-name">{avatar_html} {profile.get('display_name', b)}</div>
           <div class="bot-col"><span class="card-badge {badge_class}">{status['status']}</span></div>
-          <div class="bot-col">{mode_badge}</div>
+          <div class="bot-col">{mode_badge if mode_badge else ' '}</div>
           <div class="bot-col actions" onclick="event.stopPropagation()">
             <button class="{toggle_class}" onclick="toggleBot('{b}','{status['status']}')">{toggle_label}</button>
           </div>
@@ -240,8 +241,11 @@ def render_dashboard(active_page="trading-bots"):
             trading_rows.append(row_html)
 
     utility_html = "".join(utility_rows) if utility_rows else '<div class="bot-col">No utility bots yet.</div>'
+    trading_html = "".join(trading_rows)
+    if active_page == "utility-bots":
+        trading_html = utility_html
     html = DASHBOARD_HTML
-    html = html.replace("{{TRADING_ROWS}}", "".join(trading_rows))
+    html = html.replace("{{TRADING_ROWS}}", trading_html)
     html = html.replace("{{UTILITY_ROWS}}", utility_html)
     html = html.replace("{{ACTIVE_PAGE}}", active_page)
     return HTMLResponse(html)
