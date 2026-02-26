@@ -49,3 +49,4 @@
 - Added **Strategy Research Reports** page with report list, report viewer, and one-click backtest trigger + result display.
 - Investigate now produces synthesized strategy output and writes both strategy markdown and research report artifacts.
 - Updated **Dax** strategy scan behavior to return up to 5 ideas per run and avoid repeating previously returned strategy titles.
+- Dax live scan now uses real-source RSS collection and populates research feed with non-example links.
