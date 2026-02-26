@@ -279,7 +279,13 @@ DASHBOARD_HTML = r"""
             <section id="strategies" class="section" style="margin-top:24px;">
               <div class="section-header" style="margin-bottom:16px; display:flex; justify-content:space-between; align-items:center;">
                 <div class="section-title">Strategies</div>
-                <button class="btn-primary" onclick="showCreateStrategyModal()">Create Strategy</button>
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <label style="font-size:.8rem; color: var(--text-muted); display:flex; gap:6px; align-items:center;">
+                    <input type="checkbox" id="showArchivedStrategies" onchange="loadStrategies()" />
+                    Show archived
+                  </label>
+                  <button class="btn-primary" onclick="showCreateStrategyModal()">Create Strategy</button>
+                </div>
               </div>
               <div class="bots-layout">
                 <div class="bot-list-wrap">
@@ -296,8 +302,14 @@ DASHBOARD_HTML = r"""
                         <textarea id="strategyMarkdown"></textarea>
                       </div>
                     </div>
-                    <div class="config-actions">
-                      <button class="btn-primary" onclick="saveStrategyMarkdown()">Save Strategy</button>
+                    <div class="config-actions" style="justify-content: space-between; align-items: center;">
+                      <div>
+                        <button class="btn-primary" onclick="saveStrategyMarkdown()">Save Strategy</button>
+                      </div>
+                      <div style="display:flex; gap:8px;">
+                        <button class="btn-secondary" onclick="toggleArchiveStrategy()" id="archiveStrategyBtn">Archive</button>
+                        <button class="btn-danger" onclick="deleteStrategy()">Delete</button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -345,6 +357,17 @@ DASHBOARD_HTML = r"""
             <div class="modal-actions">
               <button class="btn-secondary" onclick="hideCreateStrategyModal()">Cancel</button>
               <button class="btn-primary" onclick="confirmCreateStrategy()">Create</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-overlay" id="deleteStrategyModal">
+          <div class="modal">
+            <div class="modal-title">Delete Strategy</div>
+            <div class="modal-text" id="deleteStrategyText">Are you sure you want to delete this strategy?</div>
+            <div class="modal-actions">
+              <button class="btn-secondary" onclick="hideDeleteStrategyModal()">Cancel</button>
+              <button class="btn-danger" onclick="confirmDeleteStrategy()">Delete</button>
             </div>
           </div>
         </div>
@@ -493,18 +516,21 @@ DASHBOARD_HTML = r"""
           }
 
           let currentStrategy = null;
+          let currentStrategyMeta = null;
 
           async function loadStrategies() {
             const res = await fetch('/api/strategies');
             const data = await res.json();
-            const list = data.list || []; // [{id,name}]
+            const all = data.list || []; // [{id,name,archived}]
+            const showArchived = !!document.getElementById('showArchivedStrategies')?.checked;
+            const list = showArchived ? all : all.filter(s => !s.archived);
 
             const sel = document.getElementById('strategySelect');
-            if (sel) sel.innerHTML = list.map(s => '<option value="' + s.id + '">' + s.name + '</option>').join('');
+            if (sel) sel.innerHTML = all.map(s => '<option value="' + s.id + '">' + s.name + '</option>').join('');
 
             const container = document.getElementById('strategiesList');
             if (container) {
-              container.innerHTML = list.map(s => '<div class="bot-row" onclick="openStrategy(\'' + s.id.replace(/'/g, "\\'") + '\')"><div class="bot-col bot-name">🧠 ' + s.name + '</div></div>').join('');
+              container.innerHTML = list.map(s => '<div class="bot-row" onclick="openStrategy(\'' + s.id.replace(/'/g, "\\'") + '\')"><div class="bot-col bot-name">🧠 ' + s.name + (s.archived ? ' <span style="opacity:.6">(archived)</span>' : '') + '</div></div>').join('');
             }
 
             if (list.length) {
@@ -518,10 +544,14 @@ DASHBOARD_HTML = r"""
           async function openStrategy(id) {
             currentStrategy = id;
             localStorage.setItem('mc-selected-strategy', id);
+            const all = (await (await fetch('/api/strategies')).json()).list || [];
+            currentStrategyMeta = all.find(x => x.id === id) || null;
             const res = await fetch('/api/strategy/' + encodeURIComponent(id) + '/md');
             const data = await res.json();
             document.getElementById('strategyPanelTitle').innerText = 'Strategy: ' + (data.name || id);
             document.getElementById('strategyMarkdown').value = data.markdown || '';
+            const btn = document.getElementById('archiveStrategyBtn');
+            if (btn) btn.innerText = (currentStrategyMeta && currentStrategyMeta.archived) ? 'Unarchive' : 'Archive';
           }
 
           async function saveStrategyMarkdown() {
@@ -530,6 +560,34 @@ DASHBOARD_HTML = r"""
             await fetch('/api/strategy/' + encodeURIComponent(currentStrategy) + '/md', {
               method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ markdown })
             });
+          }
+
+          async function toggleArchiveStrategy() {
+            if (!currentStrategy) return;
+            const archived = !(currentStrategyMeta && currentStrategyMeta.archived);
+            await fetch('/api/strategy/' + encodeURIComponent(currentStrategy) + '/archive', {
+              method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ archived })
+            });
+            await loadStrategies();
+            if (!archived) openStrategy(currentStrategy);
+          }
+
+          function deleteStrategy() {
+            if (!currentStrategy) return;
+            document.getElementById('deleteStrategyText').innerText = 'Delete strategy "' + (currentStrategyMeta?.name || currentStrategy) + '"? This cannot be undone.';
+            document.getElementById('deleteStrategyModal').classList.add('visible');
+          }
+
+          function hideDeleteStrategyModal() {
+            document.getElementById('deleteStrategyModal').classList.remove('visible');
+          }
+
+          async function confirmDeleteStrategy() {
+            if (!currentStrategy) return;
+            await fetch('/api/strategy/' + encodeURIComponent(currentStrategy) + '/delete', { method:'POST' });
+            hideDeleteStrategyModal();
+            currentStrategy = null; currentStrategyMeta = null;
+            await loadStrategies();
           }
 
           function showCreateStrategyModal() {
@@ -545,12 +603,13 @@ DASHBOARD_HTML = r"""
           async function confirmCreateStrategy() {
             const name = document.getElementById('createStrategyName').value.trim();
             if (!name) return;
-            await fetch('/api/strategy/create', {
+            const res = await fetch('/api/strategy/create', {
               method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ name })
             });
+            const data = await res.json();
             hideCreateStrategyModal();
             await loadStrategies();
-            openStrategy(name);
+            openStrategy(data.id || name);
           }
 
           let currentConfigBot = null;

@@ -15,13 +15,14 @@ AGENTS_ROOT = BASE / "agents"
 TRADING_BOTS_DIR = AGENTS_ROOT / "trading"
 UTILITY_BOTS_DIR = AGENTS_ROOT / "utility"
 STRATEGY_MD_DIR = MC_DIR / "strategies"
+STRATEGY_VERSIONS_DIR = MC_DIR / "strategies_versions"
 STATE_FILE = MC_DIR / "state.json"
 USAGE_FILE = MC_DIR / "usage.json"
 STRATEGIES_FILE = MC_DIR / "strategies.json"
 BOT_ORDER_FILE = MC_DIR / "bot_order.json"
 TEMPLATE_DIR = AGENTS_ROOT / "bot-template"
 
-for d in [AGENTS_ROOT, TRADING_BOTS_DIR, UTILITY_BOTS_DIR, STRATEGY_MD_DIR]:
+for d in [AGENTS_ROOT, TRADING_BOTS_DIR, UTILITY_BOTS_DIR, STRATEGY_MD_DIR, STRATEGY_VERSIONS_DIR]:
     d.mkdir(parents=True, exist_ok=True)
 
 app = FastAPI()
@@ -61,12 +62,14 @@ def normalize_strategies(data: dict) -> dict:
         if isinstance(item, dict):
             name = str(item.get("name", "")).strip()
             sid = str(item.get("id", "")).strip() or strategy_slug(name)
+            archived = bool(item.get("archived", False))
         else:
             name = str(item).strip()
             sid = strategy_slug(name)
+            archived = False
         if not name or not sid:
             continue
-        out.append({"id": sid, "name": name})
+        out.append({"id": sid, "name": name, "archived": archived})
     # dedupe by id preserving order
     seen = set(); dedup=[]
     for x in out:
@@ -414,7 +417,43 @@ def api_strategy_md(sid: str):
 def api_strategy_md_save(sid: str, payload: dict):
     safe = strategy_slug(sid)
     p = STRATEGY_MD_DIR / f"{safe}.md"
-    p.write_text(str(payload.get("markdown", "")))
+    new_md = str(payload.get("markdown", ""))
+    old_md = p.read_text() if p.exists() else ""
+    if old_md != new_md and p.exists():
+        vdir = STRATEGY_VERSIONS_DIR / safe
+        vdir.mkdir(parents=True, exist_ok=True)
+        ts = int(time.time())
+        (vdir / f"{ts}.md").write_text(old_md)
+    p.write_text(new_md)
+    return {"ok": True}
+
+
+@app.post("/api/strategy/{sid}/archive")
+def api_strategy_archive(sid: str, payload: dict):
+    safe = strategy_slug(sid)
+    archived = bool(payload.get("archived", True))
+    data = load_strategies()
+    changed = False
+    for item in data.get("list", []):
+        if item.get("id") == safe:
+            item["archived"] = archived
+            changed = True
+            break
+    if not changed:
+        raise HTTPException(404, "Strategy not found")
+    save_strategies(data)
+    return {"ok": True}
+
+
+@app.post("/api/strategy/{sid}/delete")
+def api_strategy_delete(sid: str):
+    safe = strategy_slug(sid)
+    data = load_strategies()
+    data["list"] = [x for x in data.get("list", []) if x.get("id") != safe]
+    save_strategies(data)
+    p = STRATEGY_MD_DIR / f"{safe}.md"
+    if p.exists():
+        p.unlink()
     return {"ok": True}
 
 
