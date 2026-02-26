@@ -96,7 +96,7 @@ MAIN_CONTENT = r"""<main>
 
             <section id="back-testing" class="section" style="margin-top:24px;">
               <div class="section-header" style="margin-bottom:16px;">
-                <div class="section-title">Back-Testing</div>
+                <div class="section-title">Back-Testing Reports</div>
               </div>
               <div class="config-panel">
                 <div class="bot-col">Back-testing tools are coming next (dataset selection, strategy replay, and performance reports).</div>
