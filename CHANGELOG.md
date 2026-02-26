@@ -38,6 +38,7 @@
 - Added **Strategy Research** page under Tools with JSON feed storage for popular/latest strategy leads.
 - Strategy Research page now renders feed items as blog-style cards with synopsis and action buttons (Discard / Investigate).
 - Added a **Confidence Model** info button + modal on Strategy Research page explaining score components and weighting.
+- Added `BACKLOG.md` entry for future Discord channel -> agent -> model routing.
 - Utility bot naming adjusted to **Dax** display name.
 - Trading mode controls are now hidden for utility bots in bot config.
 - Added utility bot scaffold **DAX** (`agents/utility/dax`) and validated a test run writing into `strategy_research.json`.
