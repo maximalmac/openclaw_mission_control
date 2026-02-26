@@ -413,6 +413,7 @@ SCRIPTS = r"""<script>
           document.getElementById('trading-bots').style.display = activePage === 'trading-bots' ? 'block' : 'none';
           document.getElementById('utility-bots').style.display = activePage === 'utility-bots' ? 'block' : 'none';
           document.getElementById('back-testing').style.display = (activePage === 'back-testing' || activePage === 'back-testing-reports') ? 'block' : 'none';
+          document.getElementById('readiness').style.display = activePage === 'readiness' ? 'block' : 'none';
           document.getElementById('usage').style.display = activePage === 'usage' ? 'block' : 'none';
           document.getElementById('strategies').style.display = activePage === 'strategies' ? 'block' : 'none';
 

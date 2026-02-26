@@ -254,6 +254,11 @@ def back_testing_reports_page():
     return render_dashboard("back-testing-reports")
 
 
+@app.get("/readiness", response_class=HTMLResponse)
+def readiness_page():
+    return render_dashboard("readiness")
+
+
 @app.get("/usage", response_class=HTMLResponse)
 def usage_page():
     return render_dashboard("usage")

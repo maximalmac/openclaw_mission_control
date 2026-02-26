@@ -14,6 +14,7 @@ SIDEBAR = r"""<aside class="sidebar">
             <a id="nav-back-testing" class="nav-item" href="/back-testing"><span class="nav-icon">🧪</span><span>Back-Testing</span></a>
             <div class="nav-section-title">Report</div>
             <a id="nav-back-testing-reports" class="nav-item" href="/back-testing-reports"><span class="nav-icon">📄</span><span>Back-Testing Reports</span></a>
+            <a id="nav-readiness" class="nav-item" href="/readiness"><span class="nav-icon">✅</span><span>Readiness Checklist</span></a>
             <div class="nav-section-title">Configuration</div>
             <a id="nav-usage" class="nav-item" href="/usage"><span class="nav-icon">📊</span><span>Usage</span></a>
             <a id="nav-strategies" class="nav-item" href="/strategies"><span class="nav-icon">🧠</span><span>Strategies</span></a>

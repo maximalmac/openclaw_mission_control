@@ -103,6 +103,26 @@ MAIN_CONTENT = r"""<main>
               </div>
             </section>
 
+            <section id="readiness" class="section" style="margin-top:24px;">
+              <div class="section-header" style="margin-bottom:16px;">
+                <div class="section-title">Production Readiness Checklist</div>
+              </div>
+              <div class="config-panel">
+                <div class="bot-list" style="gap:10px;">
+                  <div class="bot-row"><div class="bot-col bot-name">🧩 Bot Runtime Contract</div><div class="bot-col">⬜ Pending</div><div class="bot-col">Standard status/health/signal interface</div><div class="bot-col"></div></div>
+                  <div class="bot-row"><div class="bot-col bot-name">🧠 Strategy → Code Generator</div><div class="bot-col">⬜ Pending</div><div class="bot-col">Parse strategy markdown into runnable Python</div><div class="bot-col"></div></div>
+                  <div class="bot-row"><div class="bot-col bot-name">📡 Market Data Pipeline</div><div class="bot-col">⬜ Pending</div><div class="bot-col">Candles/funding/mark-index with freshness checks</div><div class="bot-col"></div></div>
+                  <div class="bot-row"><div class="bot-col bot-name">🛒 Execution Engine</div><div class="bot-col">⬜ Pending</div><div class="bot-col">Idempotent orders, retries, partial-fill handling</div><div class="bot-col"></div></div>
+                  <div class="bot-row"><div class="bot-col bot-name">🛡️ Risk Engine</div><div class="bot-col">⬜ Pending</div><div class="bot-col">Hard caps, max daily loss, kill switches</div><div class="bot-col"></div></div>
+                  <div class="bot-row"><div class="bot-col bot-name">🤖 GPT Confluence Gate</div><div class="bot-col">⬜ Pending</div><div class="bot-col">ALLOW/BLOCK/REDUCE_SIZE decision with fallback</div><div class="bot-col"></div></div>
+                  <div class="bot-row"><div class="bot-col bot-name">🧪 Backtesting + Walk-forward</div><div class="bot-col">⬜ Pending</div><div class="bot-col">Cost-aware validation before paper/live</div><div class="bot-col"></div></div>
+                  <div class="bot-row"><div class="bot-col bot-name">🗃️ Trade State DB + Reports</div><div class="bot-col">⬜ Pending</div><div class="bot-col">Orders/fills/positions/equity with reporting</div><div class="bot-col"></div></div>
+                  <div class="bot-row"><div class="bot-col bot-name">🔄 Exchange Reconciliation</div><div class="bot-col">⬜ Pending</div><div class="bot-col">Auto-detect and resolve local vs exchange drift</div><div class="bot-col"></div></div>
+                  <div class="bot-row"><div class="bot-col bot-name">🚨 Alerting + Diagnostics</div><div class="bot-col">⬜ Pending</div><div class="bot-col">Notify on failures, stalled bots, risk breaches</div><div class="bot-col"></div></div>
+                </div>
+              </div>
+            </section>
+
             <section id="usage" class="section" style="margin-top:24px;">
               <div class="section-header" style="margin-bottom:16px;">
                 <div class="section-title">Usage</div>

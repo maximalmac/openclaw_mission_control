@@ -34,3 +34,4 @@
 - Added new sidebar section **Tools** with **Back-Testing** menu item and a dedicated placeholder page.
 - Refactored UI template into smaller component files (styles, sidebar, main content, modals, scripts) to keep template code maintainable.
 - Sidebar navigation updated: restored **Tools** with **Back-Testing** and added separate **Report** section with **Back-Testing Reports**.
+- Added **Readiness Checklist** report page with production-readiness milestones for automated trading rollout.
