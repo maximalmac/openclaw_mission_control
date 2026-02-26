@@ -56,6 +56,7 @@
 - Mobile behavior updated: sidebar now collapses at wider breakpoint (and coarse-pointer devices), with larger text sizing for readability.
 - Enforced stricter mobile mode detection (width/touch/mobile-UA) and switched to explicit `body.mobile-layout` styling for more reliable behavior.
 - Increased mobile typography scale and spacing (header, section titles, cards, forms, buttons) for better readability.
+- Added mobile viewport meta tag to enforce proper phone scaling (`width=device-width, initial-scale=1`).
 - Added process note to keep Home Overview + Readiness Checklist updated as changes are implemented.
 - Investigate now produces synthesized strategy output and writes both strategy markdown and research report artifacts.
 - Updated **Dax** strategy scan behavior to return up to 5 ideas per run and avoid repeating previously returned strategy titles.

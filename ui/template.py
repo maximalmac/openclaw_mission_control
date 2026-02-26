@@ -8,6 +8,7 @@ DASHBOARD_HTML = (
     r"""
     <html>
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <title>Mission Control</title>
     """
     + STYLES
