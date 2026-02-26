@@ -146,10 +146,12 @@ def bot_profile(name: str) -> dict:
             return {
                 "emoji": data.get("emoji", "🤖"),
                 "avatar": data.get("avatar", ""),
+                "display_name": data.get("display_name", name.replace('_', ' ').title()),
+                "trading_mode": data.get("trading_mode", "paper"),
             }
         except Exception:
             pass
-    return {"emoji": "🤖", "avatar": ""}
+    return {"emoji": "🤖", "avatar": "", "display_name": name.replace('_', ' ').title(), "trading_mode": "paper"}
 
 
 def load_bot_order() -> list:
@@ -200,11 +202,12 @@ def render_dashboard(active_page="trading-bots"):
         profile = bot_profile(b)
         badge_class = "badge-live" if status['status'] == "running" else "badge-idle"
         avatar_html = f"<img src='{profile['avatar']}' class='bot-avatar' />" if profile.get('avatar') else f"<span class='bot-emoji'>{profile.get('emoji') or '🤖'}</span>"
+        mode_badge = "🟢 Live" if profile.get('trading_mode') == 'live' else "📝 Paper"
         row_html = f"""
         <div class="bot-row" draggable="true" data-bot="{b}" onclick="openConfig('{b}')">
-          <div class="bot-col bot-name">{avatar_html} {b}</div>
+          <div class="bot-col bot-name">{avatar_html} {profile.get('display_name', b)}</div>
           <div class="bot-col"><span class="card-badge {badge_class}">{status['status']}</span></div>
-          <div class="bot-col">PID: {status['pid'] or '-'}</div>
+          <div class="bot-col">{mode_badge} · PID: {status['pid'] or '-'}</div>
           <div class="bot-col actions" onclick="event.stopPropagation()">
             <button class="btn-primary" onclick="fetch('/api/bot/{b}/start',{{method:'POST'}}).then(()=>location.reload())">Start</button>
             <button class="btn-secondary" onclick="fetch('/api/bot/{b}/stop',{{method:'POST'}}).then(()=>location.reload())">Stop</button>
@@ -498,9 +501,10 @@ def api_strategy_delete(sid: str):
 
 @app.post("/api/bot/create")
 def api_bot_create(payload: dict):
-    name = payload.get("name", "").strip()
-    if not name:
+    raw_name = str(payload.get("name", "")).strip()
+    if not raw_name:
         raise HTTPException(400, "Name required")
+    name = strategy_slug(raw_name)
     kind = str(payload.get("bot_kind", "trading")).lower()
     parent = UTILITY_BOTS_DIR if kind == "utility" else TRADING_BOTS_DIR
     target = parent / name
@@ -517,8 +521,10 @@ def api_bot_create(payload: dict):
     cfg_path = target / "config.json"
     cfg = json.loads(cfg_path.read_text()) if cfg_path.exists() else {}
     cfg["bot_kind"] = "utility" if kind == "utility" else "trading"
+    cfg["display_name"] = raw_name
+    cfg.setdefault("trading_mode", "paper")
     cfg_path.write_text(json.dumps(cfg, indent=2))
-    return {"ok": True, "name": name}
+    return {"ok": True, "name": name, "display_name": raw_name}
 
 
 @app.post("/api/bot/{name}/delete")

@@ -192,6 +192,15 @@ DASHBOARD_HTML = r"""
                         <select id="strategySelect"></select>
                       </div>
                     </div>
+                    <div class="config-row" style="flex:0;">
+                      <div style="flex:1;">
+                        <label>Trading Mode</label>
+                        <div style="display:flex; gap:8px;">
+                          <button id="modePaperBtn" class="btn-secondary" type="button" onclick="setTradingMode('paper')">Paper Trading</button>
+                          <button id="modeLiveBtn" class="btn-secondary" type="button" onclick="setTradingMode('live')">Live Trading</button>
+                        </div>
+                      </div>
+                    </div>
                     <div class="config-row">
                       <div style="flex:1;">
                         <label>Emoji</label>
@@ -426,6 +435,18 @@ DASHBOARD_HTML = r"""
             }
           }
 
+          let currentTradingMode = 'paper';
+
+          function setTradingMode(mode) {
+            currentTradingMode = mode === 'live' ? 'live' : 'paper';
+            const paperBtn = document.getElementById('modePaperBtn');
+            const liveBtn = document.getElementById('modeLiveBtn');
+            if (paperBtn && liveBtn) {
+              paperBtn.className = currentTradingMode === 'paper' ? 'btn-primary' : 'btn-secondary';
+              liveBtn.className = currentTradingMode === 'live' ? 'btn-primary' : 'btn-secondary';
+            }
+          }
+
           async function loadConfig(bot) {
             const res = await fetch('/api/bot/' + bot + '/config');
             const data = await res.json();
@@ -433,6 +454,7 @@ DASHBOARD_HTML = r"""
             document.getElementById('botSelect').value = bot;
             document.getElementById('emojiInput').value = data.emoji || '';
             document.getElementById('avatarInput').value = data.avatar || '';
+            setTradingMode(data.trading_mode || 'paper');
           }
 
           async function loadFiles(bot) {
@@ -448,6 +470,7 @@ DASHBOARD_HTML = r"""
             try { payload = JSON.parse(text); } catch (e) { alert('Invalid JSON'); return false; }
             const strat = document.getElementById('strategySelect').value;
             payload.strategy = strat;
+            payload.trading_mode = currentTradingMode || 'paper';
             payload.emoji = document.getElementById('emojiInput').value || '🤖';
             payload.avatar = document.getElementById('avatarInput').value || '';
             await fetch('/api/bot/' + bot + '/config', { method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
