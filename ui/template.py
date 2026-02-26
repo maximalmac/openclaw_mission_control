@@ -1,8 +1,8 @@
-from mission_control.ui.components.styles import STYLES
-from mission_control.ui.components.sidebar import SIDEBAR
-from mission_control.ui.components.main_content import MAIN_CONTENT
-from mission_control.ui.components.modals import MODALS
-from mission_control.ui.components.scripts import SCRIPTS
+from ui.components.styles import STYLES
+from ui.components.sidebar import SIDEBAR
+from ui.components.main_content import MAIN_CONTENT
+from ui.components.modals import MODALS
+from ui.components.scripts import SCRIPTS
 
 DASHBOARD_HTML = (
     r"""

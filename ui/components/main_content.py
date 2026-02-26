@@ -14,7 +14,8 @@ MAIN_CONTENT = r"""<main>
                     • Per-bot config + SOUL editing, with unsaved-change warnings<br/>
                     • Strategy manager (create/edit/archive/delete/reorder)<br/>
                     • Strategy markdown version snapshots and changelog tracking<br/>
-                    • Strategy Research feed + Research Reports + backtest trigger UI
+                    • Strategy Research feed + Research Reports + backtest trigger UI<br/>
+                    • Usage page live pull for OpenAI daily/weekly usage snapshots
                   </div>
                 </div>
                 <div class="config-panel">
@@ -177,6 +178,7 @@ MAIN_CONTENT = r"""<main>
                 <div class="bot-list" style="gap:10px;">
                   <div class="bot-row"><div class="bot-col bot-name">🧩 Bot Runtime Contract</div><div class="bot-col">⬜ Pending</div><div class="bot-col">Standard status/health/signal interface</div><div class="bot-col"></div></div>
                   <div class="bot-row"><div class="bot-col bot-name">🖥️ Control Plane UX</div><div class="bot-col">✅ Done</div><div class="bot-col">Navigation, bot pages, strategy research/reports, changelog, screenshots</div><div class="bot-col"></div></div>
+                  <div class="bot-row"><div class="bot-col bot-name">📊 Usage Telemetry View</div><div class="bot-col">✅ Done</div><div class="bot-col">Usage page pulls current OpenAI daily/weekly snapshots plus local per-bot totals</div><div class="bot-col"></div></div>
                   <div class="bot-row"><div class="bot-col bot-name">🧠 Strategy → Code Generator</div><div class="bot-col">⬜ Pending</div><div class="bot-col">Parse strategy markdown into runnable Python</div><div class="bot-col"></div></div>
                   <div class="bot-row"><div class="bot-col bot-name">📡 Market Data Pipeline</div><div class="bot-col">⬜ Pending</div><div class="bot-col">Candles/funding/mark-index with freshness checks</div><div class="bot-col"></div></div>
                   <div class="bot-row"><div class="bot-col bot-name">🛒 Execution Engine</div><div class="bot-col">⬜ Pending</div><div class="bot-col">Idempotent orders, retries, partial-fill handling</div><div class="bot-col"></div></div>
@@ -195,17 +197,43 @@ MAIN_CONTENT = r"""<main>
                 <div class="section-title">Usage</div>
               </div>
               <div class="config-panel" id="usagePanel">
+                <div class="config-row" style="align-items:flex-end;">
+                  <div style="flex:1;">
+                    <label>Today Tokens In</label>
+                    <input id="dailyTokensIn" disabled />
+                  </div>
+                  <div style="flex:1;">
+                    <label>Today Tokens Out</label>
+                    <input id="dailyTokensOut" disabled />
+                  </div>
+                  <div style="flex:1;">
+                    <label>Today Cost</label>
+                    <input id="dailyCost" disabled />
+                  </div>
+                </div>
+                <div class="config-row" style="align-items:flex-end;">
+                  <div style="flex:1;">
+                    <label>This Week Tokens In</label>
+                    <input id="weeklyTokensIn" disabled />
+                  </div>
+                  <div style="flex:1;">
+                    <label>This Week Tokens Out</label>
+                    <input id="weeklyTokensOut" disabled />
+                  </div>
+                  <div style="flex:1;">
+                    <label>This Week Cost</label>
+                    <input id="weeklyCost" disabled />
+                  </div>
+                </div>
                 <div class="config-row">
                   <div style="flex:1;">
-                    <label>Total Tokens In</label>
-                    <input id="totalTokensIn" disabled />
+                    <label>OpenAI Usage Status</label>
+                    <input id="usageLiveStatus" disabled />
                   </div>
+                </div>
+                <div class="config-row">
                   <div style="flex:1;">
-                    <label>Total Tokens Out</label>
-                    <input id="totalTokensOut" disabled />
-                  </div>
-                  <div style="flex:1;">
-                    <label>Total Cost</label>
+                    <label>Local Totals (Mission Control)</label>
                     <input id="totalCost" disabled />
                   </div>
                 </div>

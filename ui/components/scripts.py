@@ -347,13 +347,35 @@ SCRIPTS = r"""<script>
             location.reload();
           }
 
+          function fmtUsd(v) {
+            const n = Number(v || 0);
+            return '$' + n.toFixed(4);
+          }
+
           async function loadUsage() {
             const res = await fetch('/api/usage');
             const data = await res.json();
-            document.getElementById('totalTokensIn').value = data.total?.tokens_in ?? 0;
-            document.getElementById('totalTokensOut').value = data.total?.tokens_out ?? 0;
-            document.getElementById('totalCost').value = data.total?.cost ?? 0;
+            document.getElementById('totalCost').value = 'In: ' + (data.total?.tokens_in ?? 0) + ' | Out: ' + (data.total?.tokens_out ?? 0) + ' | Cost: ' + fmtUsd(data.total?.cost ?? 0);
             document.getElementById('perBotUsage').value = JSON.stringify(data.bots || {}, null, 2);
+
+            const liveRes = await fetch('/api/usage/current');
+            const live = await liveRes.json();
+            const d = live.daily || {};
+            const w = live.weekly || {};
+
+            document.getElementById('dailyTokensIn').value = d.ok ? (d.tokens_in ?? 0) : '-';
+            document.getElementById('dailyTokensOut').value = d.ok ? (d.tokens_out ?? 0) : '-';
+            document.getElementById('dailyCost').value = d.ok ? fmtUsd(d.cost ?? 0) : '-';
+
+            document.getElementById('weeklyTokensIn').value = w.ok ? (w.tokens_in ?? 0) : '-';
+            document.getElementById('weeklyTokensOut').value = w.ok ? (w.tokens_out ?? 0) : '-';
+            document.getElementById('weeklyCost').value = w.ok ? fmtUsd(w.cost ?? 0) : '-';
+
+            if (d.ok && w.ok) {
+              document.getElementById('usageLiveStatus').value = 'Live OpenAI usage synced';
+            } else {
+              document.getElementById('usageLiveStatus').value = 'Live usage unavailable: ' + (d.error || w.error || 'unknown error');
+            }
           }
 
           let currentStrategy = null;

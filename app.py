@@ -7,7 +7,10 @@ import signal
 import subprocess
 import time
 import shutil
-from mission_control.ui.template import DASHBOARD_HTML
+import urllib.request
+import urllib.parse
+from datetime import datetime, timedelta, timezone
+from ui.template import DASHBOARD_HTML
 
 BASE = Path(os.getenv("OPENCLAW_WORKSPACE", "/Users/markfiebiger/.openclaw/workspace")).resolve()
 MC_DIR = Path(__file__).resolve().parent
@@ -49,6 +52,67 @@ def load_usage():
 
 def save_usage(data):
     USAGE_FILE.write_text(json.dumps(data, indent=2))
+
+
+def _extract_usage_totals(payload: dict) -> dict:
+    """Best-effort extraction across OpenAI usage response variants."""
+    total_in = 0
+    total_out = 0
+    total_cost = 0.0
+
+    def walk(node):
+        nonlocal total_in, total_out, total_cost
+        if isinstance(node, dict):
+            if isinstance(node.get("input_tokens"), (int, float)):
+                total_in += int(node.get("input_tokens", 0))
+            if isinstance(node.get("output_tokens"), (int, float)):
+                total_out += int(node.get("output_tokens", 0))
+            if isinstance(node.get("cost"), (int, float)):
+                total_cost += float(node.get("cost", 0.0))
+            for v in node.values():
+                walk(v)
+        elif isinstance(node, list):
+            for item in node:
+                walk(item)
+
+    walk(payload)
+    return {"tokens_in": total_in, "tokens_out": total_out, "cost": round(total_cost, 6)}
+
+
+def _fetch_openai_window_usage(start_ts: int, end_ts: int) -> dict:
+    api_key = os.getenv("OPENAI_API_KEY", "").strip()
+    if not api_key:
+        return {"ok": False, "error": "OPENAI_API_KEY is not set on Mission Control host."}
+
+    base_url = "https://api.openai.com/v1/organization/usage/completions"
+    q = urllib.parse.urlencode({"start_time": start_ts, "end_time": end_ts, "bucket_width": "1d"})
+    url = f"{base_url}?{q}"
+    req = urllib.request.Request(url, headers={"Authorization": f"Bearer {api_key}"})
+
+    try:
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            raw = resp.read().decode("utf-8")
+            payload = json.loads(raw)
+            totals = _extract_usage_totals(payload)
+            return {"ok": True, **totals}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
+
+def fetch_openai_current_usage() -> dict:
+    now = datetime.now(timezone.utc)
+    day_start = datetime(now.year, now.month, now.day, tzinfo=timezone.utc)
+    week_start = day_start - timedelta(days=day_start.weekday())
+
+    daily = _fetch_openai_window_usage(int(day_start.timestamp()), int(now.timestamp()))
+    weekly = _fetch_openai_window_usage(int(week_start.timestamp()), int(now.timestamp()))
+
+    return {
+        "provider": "openai",
+        "daily": daily,
+        "weekly": weekly,
+        "as_of": int(now.timestamp()),
+    }
 
 
 def strategy_slug(name: str) -> str:
@@ -747,3 +811,8 @@ def api_usage_update(name: str, payload: dict):
     data["total"] = {"tokens_in": total_in, "tokens_out": total_out, "cost": total_cost}
     save_usage(data)
     return {"ok": True}
+
+
+@app.get("/api/usage/current")
+def api_usage_current():
+    return fetch_openai_current_usage()
